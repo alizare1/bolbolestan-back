@@ -1,0 +1,65 @@
+[{
+  "code": "10" ,
+  "name": "Physics 3" ,
+  "instructor": "Parsa Kootzari" ,
+  "units": 3 ,
+  "classTime": {
+    "days": [
+      "saturday" ,
+      "monday"
+    ] ,
+    "time": "10-12:30"
+  } ,
+  "examTime": {
+    "start": "2021-9-01T08:00:00" ,
+    "end": "2021-9-01T09:00:00"
+  } ,
+  "capacity": 12 ,
+  "prerequisites": [
+    "Physics 2" ,
+    "Calculus 1"
+  ]
+},
+  {
+    "code": "12" ,
+    "name": "Introduction To Hamid Engineering" ,
+    "instructor": "Amin Setayesh" ,
+    "units": 4 ,
+    "classTime": {
+      "days": [
+        "tuesday"
+      ] ,
+      "time": "11-14"
+    } ,
+    "examTime": {
+      "start": "2021-12-01T08:30:00" ,
+      "end": "2021-12-01T09:30:00"
+    } ,
+    "capacity": 12 ,
+    "prerequisites": [
+      "Calculus 1",
+      "Introduction to Sarcasm"
+    ]
+  },
+  {
+    "code": "12" ,
+    "name": "Meatology" ,
+    "instructor": "M M" ,
+    "units": 5 ,
+    "classTime": {
+      "days": [
+        "friday"
+      ] ,
+      "time": "11-14"
+    } ,
+    "examTime": {
+      "start": "2021-15-01T08:30:00" ,
+      "end": "2021-15-01T09:30:00"
+    } ,
+    "capacity": 12 ,
+    "prerequisites": [
+      "Physics 2" ,
+      "Calculus 1"
+    ]
+  }
+]
