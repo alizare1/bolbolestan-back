@@ -1,5 +1,7 @@
 package com.marshmellow;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -37,15 +39,37 @@ public class CourseSelectionSystem {
             throw new OfferingNotFound();
     }
 
-    public void printResult(Boolean success,Object data,String error){
-        String message;
-        if(success)
-            message = "\"data\":" + data + "\n";
-        else
-            message = "\"error\":" + error + "\n";
+    public JsonNode createJsonResult(JsonNode data) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode root = objectMapper.createObjectNode();
+        root.put("success", true);
+        root.set("data", data);
+        return root;
+    }
 
-        String output = "{\n\"success\":" + success + ",\n" + message + "}\n";
-        System.out.print(output);
+    public JsonNode createJsonResult(String data) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode root = objectMapper.createObjectNode();
+        root.put("success", true);
+        root.put("data", data);
+        return root;
+    }
+
+    public JsonNode createJsonResult(Exception e) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode root = objectMapper.createObjectNode();
+        root.put("success", false);
+        root.put("error", e.getMessage());
+        return root;
+    }
+
+    public void printJson(JsonNode json) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     public ObjectNode getWeeklyScheduleObjectNode(ArrayNode schedule){
@@ -80,13 +104,13 @@ public class CourseSelectionSystem {
             courses.put(offerName,new ArrayList<Offering>());
         courses.get(offerName).add(newOffer);
 
-        printResult(true,"offering with code " + code  +" added successfully!","");
+        printJson(createJsonResult("offering with code " + code  +" added successfully!"));
     }
 
     public void addStudent(Student newStudent){
         String id = newStudent.getStudentId();
         students.put(id, newStudent);
-        printResult(true, "student with id " + id + " added successfully!", "");
+        printJson(createJsonResult("student with id " + id + " added successfully!"));
 
     }
 
@@ -94,9 +118,9 @@ public class CourseSelectionSystem {
         try{
             findStudent(currStudentCode);
             ObjectMapper mapper = new ObjectMapper();
-            printResult(true,getOfferingJSONArray(),"");
+            printJson(createJsonResult(getOfferingJSONArray()));
         }catch(StudentNotFound exp){
-            printResult(false,"",exp.toString());
+            printJson(createJsonResult(exp));
         }
 
     }
@@ -106,10 +130,10 @@ public class CourseSelectionSystem {
             findStudent(currStudentCode);
             Offering offering = findOffering(offeringCode);
             ObjectMapper mapper = new ObjectMapper();
-            printResult(true,mapper.valueToTree(offering),"");
+            printJson(createJsonResult(mapper.valueToTree(offering)));
 
         }catch(StudentNotFound | OfferingNotFound exp){
-            printResult(false,"",exp.toString());
+            printJson(createJsonResult(exp));
         }
     }
 
@@ -117,10 +141,10 @@ public class CourseSelectionSystem {
         try{
             Student student = findStudent(studentCode);
             student.addOffering(findOffering(offeringCode));
-            printResult(true,"offering with code "+ offeringCode +
-                    " added to weekly schedule successfully!", "");
+            printJson(createJsonResult("offering with code "+ offeringCode +
+                    " added to weekly schedule successfully!"));
         }catch(StudentNotFound | OfferingNotFound exp){
-            printResult(false,"",exp.toString());
+            printJson(createJsonResult(exp));
         }
     }
 
@@ -128,20 +152,19 @@ public class CourseSelectionSystem {
         try{
             Student student = findStudent(studentCode);
             student.removeOffering(findOffering(offeringCode));
-            printResult(true,"offering with code " + offeringCode +
-                    " removed from weekly schedule successfully!","");
+            printJson(createJsonResult("offering with code " + offeringCode +
+                    " removed from weekly schedule successfully!"));
         }catch(StudentNotFound | OfferingNotFound exp){
-            printResult(false,"",exp.toString());
+            printJson(createJsonResult(exp));
         }
     }
 
     public void getWeeklySched(String studentCode){
         try{
             ArrayNode schedule = findStudent(studentCode).getSchedule();
-            //String mapper.writerWithDefaultPrettyPrinter().writeValueAsString(schedule);
-            printResult(true, getWeeklyScheduleObjectNode(schedule),"");
+            printJson(createJsonResult(schedule));
         }catch(StudentNotFound exp){
-            printResult(false,"",exp.toString());
+            printJson(createJsonResult(exp));
         }
 
     }
@@ -150,10 +173,9 @@ public class CourseSelectionSystem {
         try{
             Student student = findStudent(studentCode);
             student.finalizeSelection();
-            printResult(true,"weekly schedule finalized successfully!","");
+            printJson(createJsonResult("weekly schedule finalized successfully!"));
         }catch(Exception exp){
-            printResult(false,"",exp.toString());
-
+            printJson(createJsonResult(exp));
         }
     }
 
