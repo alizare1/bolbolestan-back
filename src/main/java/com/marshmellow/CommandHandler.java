@@ -40,25 +40,25 @@ public class CommandHandler {
                     courseSelectionSystem.addStudent(newStudent);
                     break;
                 case GET_OFFERINGS:
-                    courseSelectionSystem.getAllOfferings(jsonNode.get("StudentId").asText());
+                    courseSelectionSystem.getAllOfferings(jsonNode.get("studentId").asText());
                     break;
                 case GET_OFFERING:
-                    courseSelectionSystem.getOffering(jsonNode.get("StudentId").asText(),
+                    courseSelectionSystem.getOffering(jsonNode.get("studentId").asText(),
                             jsonNode.get("code").asText());
                     break;
                 case ADD_TO_SCHEDULE:
-                    courseSelectionSystem.addtoWeeklySched(jsonNode.get("StudentId").asText(),
+                    courseSelectionSystem.addtoWeeklySched(jsonNode.get("studentId").asText(),
                             jsonNode.get("code").asText());
                     break;
                 case REMOVE_FROM_SCHEDULE:
-                    courseSelectionSystem.removeFromWeeklySched(jsonNode.get("StudentId").asText(),
+                    courseSelectionSystem.removeFromWeeklySched(jsonNode.get("studentId").asText(),
                             jsonNode.get("code").asText());
                     break;
                 case GET_SCHEDULE:
-                    courseSelectionSystem.getWeeklySched(jsonNode.get("StudentId").asText());
+                    courseSelectionSystem.getWeeklySched(jsonNode.get("studentId").asText());
                     break;
                 case FINALIZE:
-                    courseSelectionSystem.finalize(jsonNode.get("StudentId").asText());
+                    courseSelectionSystem.finalize(jsonNode.get("studentId").asText());
                     break;
             }
         }
