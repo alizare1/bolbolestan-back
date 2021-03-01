@@ -71,13 +71,6 @@ public class CourseSelectionSystem {
             e.printStackTrace();
         }
     }
-
-    public ObjectNode getWeeklyScheduleObjectNode(ArrayNode schedule){
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode weeklySchedule = mapper.createObjectNode();
-        weeklySchedule.set("weeklySchedule",schedule);
-        return weeklySchedule;
-    }
     
     private ArrayNode getOfferingJSONArray(){
         ObjectMapper objectMapper = new ObjectMapper();
@@ -117,7 +110,6 @@ public class CourseSelectionSystem {
     public void getAllOfferings(String currStudentCode){
         try{
             findStudent(currStudentCode);
-            ObjectMapper mapper = new ObjectMapper();
             printJson(createJsonResult(getOfferingJSONArray()));
         }catch(StudentNotFound exp){
             printJson(createJsonResult(exp));
