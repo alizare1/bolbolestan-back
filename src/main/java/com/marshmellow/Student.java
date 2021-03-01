@@ -1,8 +1,10 @@
 package com.marshmellow;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marshmellow.Exception.*;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Student {
     private String studentId;
     private String name;

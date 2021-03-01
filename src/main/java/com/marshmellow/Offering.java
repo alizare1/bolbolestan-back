@@ -2,6 +2,7 @@ package com.marshmellow;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -65,6 +66,7 @@ class ClassTime {
     }
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Offering {
     private String code;
     private String name;
