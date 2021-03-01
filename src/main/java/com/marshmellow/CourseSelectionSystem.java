@@ -39,7 +39,7 @@ public class CourseSelectionSystem {
             throw new OfferingNotFound();
     }
 
-    public JsonNode createJsonResult(JsonNode data) {
+    private JsonNode createJsonResult(JsonNode data) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode root = objectMapper.createObjectNode();
         root.put("success", true);
@@ -47,7 +47,7 @@ public class CourseSelectionSystem {
         return root;
     }
 
-    public JsonNode createJsonResult(String data) {
+    private JsonNode createJsonResult(String data) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode root = objectMapper.createObjectNode();
         root.put("success", true);
@@ -55,7 +55,7 @@ public class CourseSelectionSystem {
         return root;
     }
 
-    public JsonNode createJsonResult(Exception e) {
+    private JsonNode createJsonResult(Exception e) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode root = objectMapper.createObjectNode();
         root.put("success", false);
@@ -63,7 +63,7 @@ public class CourseSelectionSystem {
         return root;
     }
 
-    public void printJson(JsonNode json) {
+    private void printJson(JsonNode json) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
@@ -79,7 +79,7 @@ public class CourseSelectionSystem {
         return weeklySchedule;
     }
     
-    public ArrayNode getOfferingJSONArray(){
+    private ArrayNode getOfferingJSONArray(){
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode coursesArr = objectMapper.createArrayNode();
         for(String key : courses.keySet()){
