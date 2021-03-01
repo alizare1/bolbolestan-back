@@ -98,4 +98,15 @@ public class WeeklyScheduleTest {
         assertEquals(weeklySchedule.getScheduleJSONArray().size(), 2);
         weeklySchedule.removeOffering(offerings[1]);
     }
+
+    @Test(expected = CapacityError.class)
+    public void capacityErrorTest() throws IOException, MinimumUnitsError, ClassTimeCollisionError, MaximumUnitsError,
+            CapacityError, ExamTimeCollisionError {
+
+        Offering offering = objectMapper.readValue(new File("src/test/resources/capacityErrorOffer.json"),
+                Offering.class);
+        offering.addParticipant(new Student());
+        weeklySchedule.addOffering(offering);
+        weeklySchedule.finalizeSelection(new Student());
+    }
 }
