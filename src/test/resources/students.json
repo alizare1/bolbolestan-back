@@ -1,0 +1,5 @@
+[
+  {"studentId": "100", "name": "Ali", "enteredAt": "1984"} ,
+  {"studentId": "200", "name": "Melika", "enteredAt": "1984"},
+  {"studentId": "300", "name": "Mamad", "enteredAt": "2000"}
+]
