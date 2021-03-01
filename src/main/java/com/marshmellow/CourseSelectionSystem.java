@@ -62,15 +62,6 @@ public class CourseSelectionSystem {
         root.put("error", e.getMessage());
         return root;
     }
-
-    private void printJson(JsonNode json) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-    }
     
     private ArrayNode getOfferingJSONArray(){
         ObjectMapper objectMapper = new ObjectMapper();
@@ -89,7 +80,7 @@ public class CourseSelectionSystem {
         return coursesArr;
     }
 
-    public void addOffering(Offering newOffer){
+    public JsonNode addOffering(Offering newOffer){
         String code =  newOffer.getCode();
         offerings.put(newOffer.getCode(),newOffer);
         String offerName = newOffer.getName();
@@ -97,77 +88,77 @@ public class CourseSelectionSystem {
             courses.put(offerName,new ArrayList<Offering>());
         courses.get(offerName).add(newOffer);
 
-        printJson(createJsonResult("offering with code " + code  +" added successfully!"));
+        return createJsonResult("offering with code " + code  +" added successfully!");
     }
 
-    public void addStudent(Student newStudent){
+    public JsonNode addStudent(Student newStudent){
         String id = newStudent.getStudentId();
         students.put(id, newStudent);
-        printJson(createJsonResult("student with id " + id + " added successfully!"));
+        return createJsonResult("student with id " + id + " added successfully!");
 
     }
 
-    public void getAllOfferings(String currStudentCode){
+    public JsonNode getAllOfferings(String currStudentCode){
         try{
             findStudent(currStudentCode);
-            printJson(createJsonResult(getOfferingJSONArray()));
+            return createJsonResult(getOfferingJSONArray());
         }catch(StudentNotFound exp){
-            printJson(createJsonResult(exp));
+            return createJsonResult(exp);
         }
 
     }
 
-    public void getOffering(String currStudentCode,String offeringCode){
+    public JsonNode getOffering(String currStudentCode,String offeringCode){
         try{
             findStudent(currStudentCode);
             Offering offering = findOffering(offeringCode);
             ObjectMapper mapper = new ObjectMapper();
-            printJson(createJsonResult(mapper.valueToTree(offering)));
+            return createJsonResult(mapper.valueToTree(offering));
 
         }catch(StudentNotFound | OfferingNotFound exp){
-            printJson(createJsonResult(exp));
+            return createJsonResult(exp);
         }
     }
 
-    public void addtoWeeklySched(String studentCode, String offeringCode){
+    public JsonNode addtoWeeklySched(String studentCode, String offeringCode){
         try{
             Student student = findStudent(studentCode);
             student.addOffering(findOffering(offeringCode));
-            printJson(createJsonResult("offering with code "+ offeringCode +
-                    " added to weekly schedule successfully!"));
+            return createJsonResult("offering with code "+ offeringCode +
+                    " added to weekly schedule successfully!");
         }catch(StudentNotFound | OfferingNotFound exp){
-            printJson(createJsonResult(exp));
+            return createJsonResult(exp);
         }
     }
 
-    public void removeFromWeeklySched(String studentCode, String offeringCode){
+    public JsonNode removeFromWeeklySched(String studentCode, String offeringCode){
         try{
             Student student = findStudent(studentCode);
             student.removeOffering(findOffering(offeringCode));
-            printJson(createJsonResult("offering with code " + offeringCode +
-                    " removed from weekly schedule successfully!"));
+            return createJsonResult("offering with code " + offeringCode +
+                    " removed from weekly schedule successfully!");
         }catch(StudentNotFound | OfferingNotFound exp){
-            printJson(createJsonResult(exp));
+            return createJsonResult(exp);
         }
     }
 
-    public void getWeeklySched(String studentCode){
+    public JsonNode getWeeklySched(String studentCode){
         try{
             ArrayNode schedule = findStudent(studentCode).getSchedule();
-            printJson(createJsonResult(schedule));
+            return createJsonResult(schedule);
         }catch(StudentNotFound exp){
-            printJson(createJsonResult(exp));
+            return createJsonResult(exp);
         }
 
     }
 
-    public void finalize(String studentCode){
+    public JsonNode finalize(String studentCode){
         try{
             Student student = findStudent(studentCode);
             student.finalizeSelection();
-            printJson(createJsonResult("weekly schedule finalized successfully!"));
+            return createJsonResult("weekly schedule finalized successfully!");
         }catch(Exception exp){
-            printJson(createJsonResult(exp));
+            return createJsonResult(exp);
         }
     }
 

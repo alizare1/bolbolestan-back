@@ -1,5 +1,6 @@
 package com.marshmellow;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,6 +22,15 @@ public class CommandHandler {
 
     private final CourseSelectionSystem courseSelectionSystem = new CourseSelectionSystem();
 
+    private void printJson(JsonNode json) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void run() throws IOException {
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNext()) {
@@ -33,32 +43,32 @@ public class CommandHandler {
             switch (splitInput[COMMAND_INDEX]) {
                 case ADD_OFFERING:
                     Offering newOffering = objectMapper.readValue(splitInput[JSON_INDEX], Offering.class);
-                    courseSelectionSystem.addOffering(newOffering);
+                    printJson(courseSelectionSystem.addOffering(newOffering));
                     break;
                 case ADD_STUDENT:
                     Student newStudent = objectMapper.readValue(splitInput[JSON_INDEX], Student.class);
-                    courseSelectionSystem.addStudent(newStudent);
+                    printJson(courseSelectionSystem.addStudent(newStudent));
                     break;
                 case GET_OFFERINGS:
-                    courseSelectionSystem.getAllOfferings(jsonNode.get("studentId").asText());
+                    printJson(courseSelectionSystem.getAllOfferings(jsonNode.get("studentId").asText()));
                     break;
                 case GET_OFFERING:
-                    courseSelectionSystem.getOffering(jsonNode.get("studentId").asText(),
-                            jsonNode.get("code").asText());
+                    printJson(courseSelectionSystem.getOffering(jsonNode.get("studentId").asText(),
+                            jsonNode.get("code").asText()));
                     break;
                 case ADD_TO_SCHEDULE:
-                    courseSelectionSystem.addtoWeeklySched(jsonNode.get("studentId").asText(),
-                            jsonNode.get("code").asText());
+                    printJson(courseSelectionSystem.addtoWeeklySched(jsonNode.get("studentId").asText(),
+                            jsonNode.get("code").asText()));
                     break;
                 case REMOVE_FROM_SCHEDULE:
-                    courseSelectionSystem.removeFromWeeklySched(jsonNode.get("studentId").asText(),
-                            jsonNode.get("code").asText());
+                    printJson(courseSelectionSystem.removeFromWeeklySched(jsonNode.get("studentId").asText(),
+                            jsonNode.get("code").asText()));
                     break;
                 case GET_SCHEDULE:
-                    courseSelectionSystem.getWeeklySched(jsonNode.get("studentId").asText());
+                    printJson(courseSelectionSystem.getWeeklySched(jsonNode.get("studentId").asText()));
                     break;
                 case FINALIZE:
-                    courseSelectionSystem.finalize(jsonNode.get("studentId").asText());
+                    printJson(courseSelectionSystem.finalize(jsonNode.get("studentId").asText()));
                     break;
             }
         }
