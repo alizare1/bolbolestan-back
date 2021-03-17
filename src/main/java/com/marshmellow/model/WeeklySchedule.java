@@ -5,29 +5,18 @@ import com.marshmellow.Exception.*;
 import java.util.ArrayList;
 
 
-class Course {
-    public Course(Offering offer, String st) {
-        offering = offer;
-        status = st;
-    }
-    public Offering offering;
-    public String status;
-}
 
 public class WeeklySchedule {
-    public static final String FINALIZED = "finalized";
-    public static final String NON_FINALIZED = "non-finalized";
-    public static final String STATUS = "status";
-
-    private final ArrayList<Course> courses = new ArrayList<>();
+    private final ArrayList<Offering> inProgressCourses = new ArrayList<>();
+    private final ArrayList<Offering> submittedCourses = new ArrayList<>();
 
     public void addOffering(Offering offering) throws  ExamTimeCollisionError, ClassTimeCollisionError {
         validateTimeCollisions(offering);
-        courses.add(new Course(offering, NON_FINALIZED));
+        inProgressCourses.add(offering);
     }
 
     public void removeOffering(Offering offering) throws OfferingNotFound {
-        if (!courses.removeIf(c -> c.offering == offering))
+        if (!inProgressCourses.removeIf(c -> c == offering))
             throw new OfferingNotFound();
     }
 
@@ -40,17 +29,14 @@ public class WeeklySchedule {
     }
 
     private void validateCapacity() throws CapacityError {
-        for (Course course : courses) {
-            if (course.status.equals(NON_FINALIZED)) { //TODO chera?
-                if (!course.offering.hasCapacity())
-                    throw new CapacityError(course.offering.getCode());
-            }
+        for (Offering course : getNewlyAddedCourses()) {
+            if (!course.hasCapacity())
+                throw new CapacityError(course.getCode());
         }
     }
 
     private void validateTimeCollisions(Offering newOffer) throws ClassTimeCollisionError, ExamTimeCollisionError {
-        for (Course course : courses) {
-            Offering offer2 = course.offering;
+        for (Offering offer2 : inProgressCourses) {
             if (newOffer.classTimeCollidesWith(offer2))
                 throw new ClassTimeCollisionError(newOffer.getCode(), offer2.getCode());
             else if (newOffer.examTimeCollidesWith(offer2))
@@ -59,8 +45,8 @@ public class WeeklySchedule {
     }
 
     private void validatePrerequisites(Student student) throws PrerequisitesError{
-        for(Course course : courses)
-            student.validatePrerequisites(course.offering);
+        for(Offering course : inProgressCourses)
+            student.validatePrerequisites(course);
     }
 
     public void finalizeSelection(Student student)
@@ -70,30 +56,48 @@ public class WeeklySchedule {
         validateCapacity();
         validatePrerequisites(student);
 
-        for (Course course : courses)
-            if(course.status.equals(NON_FINALIZED)){
-                 course.status = FINALIZED;
-                 course.offering.addParticipant(student);
-            }
+        for (Offering course : getNewlyAddedCourses()) {
+            course.addParticipant(student);
+            submittedCourses.add(course);
+        }
 
-     for(Offering offering : student.getRemovedCourses()) //TODO fix Cannot invoke "java.util.Collection.toArray()" because "c" is null
-             offering.removeParticipant(student);
+        for(Offering offering : getRemovedCourses()) {
+            offering.removeParticipant(student);
+            submittedCourses.remove(offering);
+        }
 
+    }
+
+    public void resetSelection() {
+        inProgressCourses.clear();
+        inProgressCourses.addAll(submittedCourses);
+    }
+
+    private ArrayList<Offering> getRemovedCourses() {
+        ArrayList<Offering> differences = new ArrayList<Offering>(submittedCourses);
+        differences.removeAll(inProgressCourses);
+        return differences;
+    }
+
+    private ArrayList<Offering> getNewlyAddedCourses() {
+        ArrayList<Offering> differences = new ArrayList<Offering>(inProgressCourses);
+        differences.removeAll(submittedCourses);
+        return differences;
     }
 
     public int getUnitCount() {
         int units = 0;
-        for (Course course : courses) {
-            units += course.offering.getUnits();
+        for (Offering course : inProgressCourses) {
+            units += course.getUnits();
         }
         return units;
     }
 
     public ArrayList<Offering> getSchedule() {
-        ArrayList<Offering> stdCourses = new ArrayList<>();
-        for (Course course : courses) {
-            stdCourses.add(course.offering);
-        }
-        return stdCourses;
+        return submittedCourses;
+    }
+
+    public ArrayList<Offering> getInProgressCourses() {
+        return inProgressCourses;
     }
 }

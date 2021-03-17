@@ -28,7 +28,6 @@ public class Student {
     private String birthDate;
     private Map<String, Grade> grades;
     private final WeeklySchedule schedule = new WeeklySchedule();
-    private  ArrayList<Offering> submittedCourses = new ArrayList<>();
 
     public void addOffering(Offering offering) throws  OfferingNotFound, ExamTimeCollisionError, ClassTimeCollisionError {
       //  validatePrerequisites(offering);
@@ -56,18 +55,19 @@ public class Student {
         return schedule.getSchedule();
     }
 
+    public ArrayList<Offering> getInProgressSchedule() {
+        return schedule.getInProgressCourses();
+    }
+
     public void finalizeSelection() throws MinimumUnitsError, MaximumUnitsError,
             CapacityError,PrerequisitesError{
         schedule.finalizeSelection(this);
-        submittedCourses = getSchedule();
-
     }
 
-    public ArrayList<Offering> getRemovedCourses(){
-        ArrayList<Offering> differences = new ArrayList(submittedCourses);
-        differences.removeAll(getSchedule());
-        return differences;
+    public void resetSelection() {
+        schedule.resetSelection();
     }
+
     public void resetSchedule(){
 
 

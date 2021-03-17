@@ -40,7 +40,7 @@
         <th></th>
     </tr>
     <%
-        for(Offering offering : student.getSchedule()){ %>
+        for(Offering offering : student.getInProgressSchedule()){ %>
             <tr>
                 <td><%= offering.getCode() %></td>
                 <td><%= offering.getClassCode() %></td>

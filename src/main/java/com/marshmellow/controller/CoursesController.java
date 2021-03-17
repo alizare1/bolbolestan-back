@@ -48,6 +48,7 @@ public class CoursesController extends HttpServlet {
                 }
                 break;
             case "reset":
+                student.resetSelection();
                 break;
             case "search":
                 searchFilter = request.getParameter("search");
