@@ -17,7 +17,6 @@
 </h1>
 <br>
 <h3>
-    <%=(String)request.getAttribute("error message")%>
     <%=exception.getMessage()%>
 </h3>
 </body>
