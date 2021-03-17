@@ -6,6 +6,7 @@ import com.marshmellow.Exception.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 class Grade {
@@ -84,8 +85,12 @@ public class Student {
         return unitSum;
     }
 
-    public Collection<Grade> getGrades() {
-        return grades.values();
+    public Map<String, Integer> getGrades() {
+        Map<String, Integer> gradeMap = new HashMap<>();
+        for (String s : grades.keySet()) {
+            gradeMap.put(s, grades.get(s).grade);
+        }
+        return gradeMap;
     }
 
     public void setGrades(Map<String, Grade> grades) {
