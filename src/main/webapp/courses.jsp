@@ -71,7 +71,7 @@
 
 <form class="search_form" action="" method="POST">
     <label>Search:</label>
-    <input type="text" name="search" value="">
+    <input type="text" name="search" value="<%=searchFilter%>">
     <button type="submit" name="action" value="search">Search</button>
     <button type="submit" name="action" value="clear">Clear Search</button>
 </form>
