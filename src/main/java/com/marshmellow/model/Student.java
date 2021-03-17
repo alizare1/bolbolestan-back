@@ -30,7 +30,6 @@ public class Student {
     private final WeeklySchedule schedule = new WeeklySchedule();
 
     public void addOffering(Offering offering) throws  OfferingNotFound, ExamTimeCollisionError, ClassTimeCollisionError {
-      //  validatePrerequisites(offering);
         schedule.addOffering(offering);
     }
 
@@ -40,12 +39,11 @@ public class Student {
                 throw new PrerequisitesError(prerequisite);
     }
 
-   /* public void (Offering offering)throws {
-        for(String courseCode : grades.keySet()){
-            if(offering.getCode().equals(courseCode) && grades.get(courseCode).grade >= 10)
-                throw new
-        }
-    }*/
+    public boolean hasPassed(Offering offering) {
+        if (grades.containsKey(offering.getCode()))
+            return grades.get(offering.getCode()).grade >= 10;
+        return false;
+    }
 
     public void removeOffering(Offering offering) throws OfferingNotFound {
         schedule.removeOffering(offering);
@@ -60,17 +58,12 @@ public class Student {
     }
 
     public void finalizeSelection() throws MinimumUnitsError, MaximumUnitsError,
-            CapacityError,PrerequisitesError{
+            CapacityError, PrerequisitesError, AlreadyPassedError {
         schedule.finalizeSelection(this);
     }
 
     public void resetSelection() {
         schedule.resetSelection();
-    }
-
-    public void resetSchedule(){
-
-
     }
 
     public int getCurrentUnitCount() {

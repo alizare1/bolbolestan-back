@@ -49,12 +49,21 @@ public class WeeklySchedule {
             student.validatePrerequisites(course);
     }
 
+    private void validateAlreadyPassed(Student student) throws AlreadyPassedError {
+        for (Offering course : getNewlyAddedCourses()) {
+            if (student.hasPassed(course))
+                throw new AlreadyPassedError(course.getCode());
+        }
+
+    }
+
     public void finalizeSelection(Student student)
-            throws MinimumUnitsError, MaximumUnitsError, CapacityError,PrerequisitesError {
+            throws MinimumUnitsError, MaximumUnitsError, CapacityError, PrerequisitesError, AlreadyPassedError {
 
         validateUnitsCount();
         validateCapacity();
         validatePrerequisites(student);
+        validateAlreadyPassed(student);
 
         for (Offering course : getNewlyAddedCourses()) {
             course.addParticipant(student);
