@@ -13,6 +13,10 @@ import java.util.*;
 public class PlanController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (CourseSelectionSystem.getInstance().getCurrentStudent() == null) {
+            response.sendRedirect("/login");
+            return;
+        }
         Map<String, Map<String, String>> plan = new HashMap<>();
         ArrayList<Offering> courses = CourseSelectionSystem.getInstance().getCurrentStudent().getSchedule();
         for (Offering c : courses) {
