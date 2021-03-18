@@ -132,6 +132,14 @@ public class Offering {
         return classTime;
     }
 
+    public ArrayList<String> getClassDays() {
+        return classTime.days;
+    }
+
+    public String getClassHour() {
+        return classTime.time;
+    }
+
     public void setClassTime(ClassTime classTime) {
         this.classTime = classTime;
     }
