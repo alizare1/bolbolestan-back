@@ -148,6 +148,14 @@ public class Offering {
         return examTime;
     }
 
+    public Date getExamStart() {
+        return examTime.start;
+    }
+
+    public Date getExamEnd() {
+        return examTime.end;
+    }
+
     public void setExamTime(ExamTime examTime) {
         this.examTime = examTime;
     }

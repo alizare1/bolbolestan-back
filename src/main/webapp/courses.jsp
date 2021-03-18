@@ -105,16 +105,17 @@
         <td><%=offering.signedUp()%></td>
         <td><%=offering.getCapacity()%></td>
         <td><%=offering.getType()%></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td><%=String.join("|", offering.getClassDays())%></td>
+        <td><%=offering.getClassHour()%></td>
+        <% SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); %>
+        <td><%=dateFormat.format(offering.getExamStart())%></td>
+        <td><%=dateFormat.format(offering.getExamEnd())%></td>
         <td><%=  String.join( "|",offering.getPrerequisites()) %></td>
         <td>
             <form action="" method="POST" >
                 <input  type="hidden" name="action" value="add">
-                <input  type="hidden" name="course_code" value=<%= offering.getCode()%>>
-                <input  type="hidden" name="class_code" value="01">
+                <input  type="hidden" name="course_code" value="<%= offering.getCode()%>">
+                <input  type="hidden" name="class_code" value="<%= offering.getClassCode()%>">
                 <button type="submit">Add</button>
             </form>
         </td>
