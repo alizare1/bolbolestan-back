@@ -73,15 +73,20 @@ public class Student {
 
     public float getGpa() {
         float gradeSum = 0;
-        for (Grade courseGrade : grades.values())
+        int unitSum = 0;
+        for (Grade courseGrade : grades.values()) {
             gradeSum += courseGrade.grade * courseGrade.units;
-        return gradeSum / getPassedUnitsCount();
+            unitSum += courseGrade.units;
+        }
+        return gradeSum / unitSum;
     }
 
     public int getPassedUnitsCount() {
         int unitSum = 0;
-        for (Grade courseGrade : grades.values())
-            unitSum += courseGrade.units;
+        for (Grade courseGrade : grades.values()) {
+            if (courseGrade.grade >= 10)
+                unitSum += courseGrade.units;
+        }
         return unitSum;
     }
 
