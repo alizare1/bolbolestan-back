@@ -43,10 +43,11 @@ public class CoursesController extends HttpServlet {
             case "submit":
                 try {
                     student.finalizeSelection();
+                    response.sendRedirect("/plan");
+                    return;
                 }catch (Exception exception){
                     throw new ServletException(exception);
                 }
-                break;
             case "reset":
                 student.resetSelection();
                 break;
