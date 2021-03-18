@@ -112,15 +112,13 @@ public class CourseSelectionSystem {
     public ArrayList<Offering> getCourses(String filter) {
         ArrayList<Offering> coursesArray = new ArrayList<>();
         for (Map<String, Offering> offers : courses.values()) {
-             for(Offering offer : offers.values())
-                 if (offer.getName().contains(filter)) {
+             for(Offering offer : offers.values()) {
+                 if (offer.getName().toLowerCase().contains(filter.toLowerCase())) {
                      coursesArray.addAll(offers.values());
                      break;
                  }
+             }
         }
-        // coursesArray.addAll(offer.values());
-
-
         return coursesArray;
     }
 
