@@ -12,11 +12,13 @@ import java.util.Map;
 class Grade {
     public String code;
     public int grade;
+    public int term;
     public int units;
 
-    public Grade(String code, int grade, int units) {
+    public Grade(String code, int grade, int term, int units) {
         this.code = code;
         this.grade = grade;
+        this.term = term;
         this.units = units;
     }
 }

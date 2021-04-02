@@ -16,9 +16,9 @@ import com.marshmellow.Exception.*;
 
 public class CourseSelectionSystem {
 
-    private static final String API_COURSES = "http://138.197.181.131:5000/api/courses";
-    private static final String API_STUDENTS = "http://138.197.181.131:5000/api/students";
-    private static final String API_GRADE = "http://138.197.181.131:5000/api/grades/";
+    private static final String API_COURSES = "http://138.197.181.131:5100/api/courses";
+    private static final String API_STUDENTS = "http://138.197.181.131:5100/api/students";
+    private static final String API_GRADE = "http://138.197.181.131:5100/api/grades/";
 
     private final HashMap<String,Student> students;
     private final Map<String, Map<String,Offering>> courses;
@@ -91,8 +91,8 @@ public class CourseSelectionSystem {
         Map<String, Grade> gradesMap = new HashMap<>();
         gradesArr.forEach(grade -> {
             try {
-                int unitCount = this.getCourse(grade.get("code").asText(), "01").getUnits();
-                Grade newGrade = new Grade(grade.get("code").asText(), grade.get("grade").asInt(), unitCount);
+                int unitCount = this.getCourse(grade.get("code").asText(), "1").getUnits();
+                Grade newGrade = new Grade(grade.get("code").asText(), grade.get("grade").asInt(), grade.get("term").asInt(), unitCount);
                 gradesMap.put(grade.get("code").asText(), newGrade);
             } catch (OfferingNotFound offeringNotFound) {
                 offeringNotFound.printStackTrace();
