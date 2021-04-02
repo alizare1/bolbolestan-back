@@ -23,11 +23,16 @@
 </head>
 <body>
 <a href="/">Home</a>
+<img src="<%=student.getImg()%>">
 <ul>
     <li id="std_id">Student Id: <%=student.getStudentId()%></li>
     <li id="first_name">First Name: <%=student.getName()%></li>
     <li id="last_name">Last Name: <%=student.getSecondName()%></li>
     <li id="birthdate">Birthdate: <%=student.getBirthDate()%></li>
+    <li id="field">Field: <%=student.getField()%></li>
+    <li id="faculty">Faculty: <%=student.getFaculty()%></li>
+    <li id="level">Level: <%=student.getLevel()%></li>
+    <li id="status">Status: <%=student.getStatus()%></li>
     <li id="gpa">GPA: <%=String.format("%.2f", student.getGpa())%></li>
     <li id="tpu">Total Passed Units: <%=student.getPassedUnitsCount()%></li>
 </ul>
