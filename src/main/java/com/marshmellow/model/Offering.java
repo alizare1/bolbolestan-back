@@ -7,9 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 
 class ExamTime {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -78,6 +76,7 @@ public class Offering {
     private ExamTime examTime;
     private int capacity;
     private ArrayList<String> prerequisites;
+    private final Queue<Student> waitingQueue = new LinkedList<>();
     @JsonIgnore
     private final ArrayList<Student> participants = new ArrayList<>();
 
@@ -102,9 +101,24 @@ public class Offering {
             participants.add(student);
     }
 
+    public void addToQueue(Student student) {
+        waitingQueue.add(student);
+    }
+
+    public void handleQueue() {
+        while (hasCapacity()) {
+            Student student = waitingQueue.remove();
+            addParticipant(student);
+            student.submitFromQueue(this);
+        }
+    }
+
     public void removeParticipant(Student student){
         participants.removeIf(s -> s.getStudentId().equals(student.getStudentId()));
-       // participants.remove(student);
+    }
+
+    public void removeFromQueue(Student student) {
+        waitingQueue.remove(student);
     }
     public int signedUp(){return participants.size();}
 

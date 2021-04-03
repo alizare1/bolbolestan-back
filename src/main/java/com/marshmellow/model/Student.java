@@ -41,6 +41,14 @@ public class Student {
         schedule.addOffering(offering);
     }
 
+    public void addToQueue(Offering offering) throws Exception {
+        schedule.addToQueue(offering);
+    }
+
+    public void submitFromQueue(Offering offering) {
+        schedule.submitFromQueue(offering);
+    }
+
     public void validatePrerequisites(Offering offering) throws PrerequisitesError {
         for (String prerequisite : offering.getPrerequisites())
             if (!grades.containsKey(prerequisite) || grades.get(prerequisite).grade < 10)
@@ -57,12 +65,20 @@ public class Student {
         schedule.removeOffering(offering);
     }
 
+    public void removeOfferingFromQueue(Offering offering) throws OfferingNotFound {
+        schedule.removeFromQueue(offering);
+    }
+
     public ArrayList<Offering> getSchedule() {
         return schedule.getSchedule();
     }
 
     public ArrayList<Offering> getInProgressSchedule() {
         return schedule.getInProgressCourses();
+    }
+
+    public ArrayList<Offering> getInProgressQueue() {
+        return schedule.getInProgressQueue();
     }
 
     public void finalizeSelection() throws MinimumUnitsError, MaximumUnitsError,

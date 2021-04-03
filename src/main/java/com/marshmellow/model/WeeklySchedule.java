@@ -9,10 +9,22 @@ import java.util.ArrayList;
 public class WeeklySchedule {
     private final ArrayList<Offering> inProgressCourses = new ArrayList<>();
     private final ArrayList<Offering> submittedCourses = new ArrayList<>();
+    private final ArrayList<Offering> inProgressWaitingCourses = new ArrayList<>();
+    private final ArrayList<Offering> waitingCourses = new ArrayList<>();
 
     public void addOffering(Offering offering) throws  ExamTimeCollisionError, ClassTimeCollisionError {
         validateTimeCollisions(offering);
         inProgressCourses.add(offering);
+    }
+
+    public void addToQueue(Offering offering) throws Exception {
+        validateTimeCollisions(offering);
+        inProgressWaitingCourses.add(offering);
+    }
+
+    public void submitFromQueue(Offering offering) {
+        waitingCourses.remove(offering);
+        submittedCourses.add(offering);
     }
 
     public void removeOffering(Offering offering) throws OfferingNotFound {
@@ -20,11 +32,17 @@ public class WeeklySchedule {
             throw new OfferingNotFound();
     }
 
+    public void removeFromQueue(Offering offering) throws OfferingNotFound {
+        if (!inProgressWaitingCourses.removeIf(c -> c == offering))
+            throw new OfferingNotFound();
+    }
+
     private void validateUnitsCount() throws MinimumUnitsError, MaximumUnitsError {
         int units = getUnitCount();
+        int waitingUnits = getUnits(inProgressWaitingCourses);
         if (units < 12)
             throw new MinimumUnitsError();
-        else if (units > 20)
+        else if (units + waitingUnits > 20)
             throw new MaximumUnitsError();
     }
 
@@ -47,10 +65,18 @@ public class WeeklySchedule {
     private void validatePrerequisites(Student student) throws PrerequisitesError{
         for(Offering course : inProgressCourses)
             student.validatePrerequisites(course);
+
+        for(Offering course : waitingCourses)
+            student.validatePrerequisites(course);
     }
 
     private void validateAlreadyPassed(Student student) throws AlreadyPassedError {
         for (Offering course : getNewlyAddedCourses()) {
+            if (student.hasPassed(course))
+                throw new AlreadyPassedError(course.getCode());
+        }
+
+        for (Offering course : getNewQueues()) {
             if (student.hasPassed(course))
                 throw new AlreadyPassedError(course.getCode());
         }
@@ -70,33 +96,59 @@ public class WeeklySchedule {
             submittedCourses.add(course);
         }
 
-        for(Offering offering : getRemovedCourses()) {
+        for (Offering offering : getRemovedCourses()) {
             offering.removeParticipant(student);
             submittedCourses.remove(offering);
+        }
+
+        for (Offering course : getNewQueues()) {
+            course.addToQueue(student);
+            waitingCourses.add(course);
+        }
+
+        for (Offering course : getRemovedQueues()) {
+            course.removeFromQueue(student);
+            waitingCourses.remove(course);
         }
 
     }
 
     public void resetSelection() {
         inProgressCourses.clear();
+        inProgressWaitingCourses.clear();
         inProgressCourses.addAll(submittedCourses);
+        inProgressWaitingCourses.addAll(waitingCourses);
     }
 
     private ArrayList<Offering> getRemovedCourses() {
-        ArrayList<Offering> differences = new ArrayList<Offering>(submittedCourses);
-        differences.removeAll(inProgressCourses);
-        return differences;
+        return getDiffOfferings(submittedCourses, inProgressCourses);
     }
 
     private ArrayList<Offering> getNewlyAddedCourses() {
-        ArrayList<Offering> differences = new ArrayList<Offering>(inProgressCourses);
-        differences.removeAll(submittedCourses);
+        return getDiffOfferings(inProgressCourses, submittedCourses);
+    }
+
+    private ArrayList<Offering> getNewQueues() {
+        return getDiffOfferings(inProgressWaitingCourses, waitingCourses);
+    }
+
+    private ArrayList<Offering> getRemovedQueues() {
+        return getDiffOfferings(waitingCourses, inProgressWaitingCourses);
+    }
+
+    private ArrayList<Offering> getDiffOfferings(ArrayList<Offering> new_, ArrayList<Offering> old) {
+        ArrayList<Offering> differences = new ArrayList<Offering>(new_);
+        differences.removeAll(old);
         return differences;
     }
 
     public int getUnitCount() {
+        return getUnits(inProgressCourses);
+    }
+
+    private int getUnits(ArrayList<Offering> list) {
         int units = 0;
-        for (Offering course : inProgressCourses) {
+        for (Offering course : list) {
             units += course.getUnits();
         }
         return units;
@@ -108,5 +160,9 @@ public class WeeklySchedule {
 
     public ArrayList<Offering> getInProgressCourses() {
         return inProgressCourses;
+    }
+
+    public ArrayList<Offering> getInProgressQueue() {
+        return inProgressWaitingCourses;
     }
 }

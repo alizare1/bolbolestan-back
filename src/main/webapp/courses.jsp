@@ -57,6 +57,24 @@
             </tr>
 
    <% } %>
+    <%
+        for(Offering offering : student.getInProgressQueue()){ %>
+    <tr>
+        <td style="color: red"><%= offering.getCode() %></td>
+        <td><%= offering.getClassCode() %></td>
+        <td><%= offering.getName() %></td>
+        <td><%= offering.getUnits() %></td>
+        <td>
+            <form action="" method="POST" >
+                <input id="form_action" type="hidden" name="action" value="remove_queue">
+                <input id="form_course_code" type="hidden" name="course_code" value="<%= offering.getCode()%>">
+                <input id="form_class_code" type="hidden" name="class_code" value="<%= offering.getClassCode()%>">
+                <button type="submit">Remove Queue</button>
+            </form>
+        </td>
+    </tr>
+
+    <% } %>
 
 </table>
 
@@ -112,11 +130,13 @@
         <td><%=dateFormat.format(offering.getExamEnd())%></td>
         <td><%=  String.join( "|",offering.getPrerequisites()) %></td>
         <td>
+            <%! String buttonAction = "add"; %>
+            <% buttonAction = offering.hasCapacity() ? "add" : "queue"; %>
             <form action="" method="POST" >
-                <input  type="hidden" name="action" value="add">
+                <input  type="hidden" name="action" value="<%=buttonAction%>">
                 <input  type="hidden" name="course_code" value="<%= offering.getCode()%>">
                 <input  type="hidden" name="class_code" value="<%= offering.getClassCode()%>">
-                <button type="submit">Add</button>
+                <button type="submit"><%=buttonAction.substring(0,1).toUpperCase() + buttonAction.substring(1)%></button>
             </form>
         </td>
     </tr>

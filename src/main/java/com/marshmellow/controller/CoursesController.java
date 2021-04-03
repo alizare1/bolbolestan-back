@@ -1,5 +1,6 @@
 package com.marshmellow.controller;
 
+import com.marshmellow.Exception.OfferingNotFound;
 import com.marshmellow.model    .CourseSelectionSystem;
 import com.marshmellow.Exception.ClassTimeCollisionError;
 import com.marshmellow.Exception.ExamTimeCollisionError;
@@ -63,6 +64,22 @@ public class CoursesController extends HttpServlet {
                             request.getParameter("course_code"), request.getParameter("class_code"));
                 }catch(Exception exception){
                      throw new ServletException(exception);
+                }
+                break;
+            case "queue":
+                try {
+                    student.addToQueue(CourseSelectionSystem.getInstance().getCourse(
+                            request.getParameter("course_code"), request.getParameter("class_code")));
+                } catch(Exception exception){
+                    throw new ServletException(exception);
+                }
+                break;
+            case "remove_queue":
+                try {
+                    student.removeOfferingFromQueue(CourseSelectionSystem.getInstance().getCourse(
+                            request.getParameter("course_code"), request.getParameter("class_code")));
+                } catch(Exception exception){
+                    throw new ServletException(exception);
                 }
                 break;
 
