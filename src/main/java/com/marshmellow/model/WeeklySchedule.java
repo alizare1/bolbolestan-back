@@ -24,6 +24,8 @@ public class WeeklySchedule {
 
     public void submitFromQueue(Offering offering) {
         waitingCourses.remove(offering);
+        inProgressWaitingCourses.remove(offering);
+        inProgressCourses.add(offering);
         submittedCourses.add(offering);
     }
 

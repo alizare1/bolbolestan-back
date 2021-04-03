@@ -103,6 +103,7 @@ public class Offering {
 
     public void addToQueue(Student student) {
         waitingQueue.add(student);
+        capacity++;
     }
 
     public void handleQueue() {
