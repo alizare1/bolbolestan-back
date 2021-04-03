@@ -106,7 +106,7 @@ public class Offering {
     }
 
     public void handleQueue() {
-        while (hasCapacity()) {
+        while (hasCapacity() && !waitingQueue.isEmpty()) {
             Student student = waitingQueue.remove();
             addParticipant(student);
             student.submitFromQueue(this);
