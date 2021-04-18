@@ -122,6 +122,13 @@ public class CourseSelectionSystem {
         return coursesArray;
     }
 
+    public ArrayList<Offering> getCourses(String filter, String typeFilter) {
+        ArrayList<Offering> coursesArray = getCourses(filter);
+        if (!typeFilter.isEmpty())
+            coursesArray.removeIf(offer -> !offer.getType().equalsIgnoreCase(typeFilter));
+        return coursesArray;
+    }
+
     public Student getStudent(String studentCode)throws StudentNotFound{
 
         if(students.get(studentCode) == null)
