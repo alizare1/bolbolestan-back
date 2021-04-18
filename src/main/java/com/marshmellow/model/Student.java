@@ -1,5 +1,6 @@
 package com.marshmellow.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.marshmellow.Exception.*;
@@ -37,8 +38,11 @@ public class Student {
     private Map<String, Grade> grades;
     private final WeeklySchedule schedule = new WeeklySchedule();
 
-    public void addOffering(Offering offering) throws  OfferingNotFound, ExamTimeCollisionError, ClassTimeCollisionError {
-        schedule.addOffering(offering);
+    public void addOffering(Offering offering) throws Exception {
+        if (!offering.hasCapacity())
+            addToQueue(offering);
+        else
+            schedule.addOffering(offering);
     }
 
     public void addToQueue(Offering offering) throws Exception {
@@ -69,14 +73,22 @@ public class Student {
         schedule.removeFromQueue(offering);
     }
 
+    @JsonProperty("schedule")
+    public WeeklySchedule getWeeklySchedule() {
+        return schedule;
+    }
+
+    @JsonIgnore
     public ArrayList<Offering> getSchedule() {
         return schedule.getSchedule();
     }
 
+    @JsonIgnore
     public ArrayList<Offering> getInProgressSchedule() {
         return schedule.getInProgressCourses();
     }
 
+    @JsonIgnore
     public ArrayList<Offering> getInProgressQueue() {
         return schedule.getInProgressQueue();
     }

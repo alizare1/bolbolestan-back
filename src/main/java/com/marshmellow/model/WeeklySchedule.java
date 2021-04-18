@@ -1,5 +1,7 @@
 package com.marshmellow.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.marshmellow.Exception.*;
 
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ public class WeeklySchedule {
     }
 
     public void removeOffering(Offering offering) throws OfferingNotFound {
-        if (!inProgressCourses.removeIf(c -> c == offering))
+        if (!inProgressCourses.removeIf(c -> c == offering) && !inProgressWaitingCourses.removeIf(c -> c == offering))
             throw new OfferingNotFound();
     }
 
@@ -156,6 +158,7 @@ public class WeeklySchedule {
         return units;
     }
 
+    @JsonIgnore
     public ArrayList<Offering> getSchedule() {
         return submittedCourses;
     }

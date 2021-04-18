@@ -150,8 +150,7 @@ public class CourseSelectionSystem {
         }
     }
 
-    public void addtoWeeklySched(String studentCode, String offeringCode, String groupCode)
-            throws OfferingNotFound, StudentNotFound, PrerequisitesError, ClassTimeCollisionError, ExamTimeCollisionError {
+    public void addtoWeeklySched(String studentCode, String offeringCode, String groupCode) throws Exception {
 
         getStudent(studentCode).addOffering(getCourse(offeringCode, groupCode));
     }
