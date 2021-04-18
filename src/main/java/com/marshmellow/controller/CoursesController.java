@@ -1,91 +1,36 @@
 package com.marshmellow.controller;
 
 import com.marshmellow.Exception.OfferingNotFound;
-import com.marshmellow.model    .CourseSelectionSystem;
+import com.marshmellow.Exception.StudentNotFound;
+import com.marshmellow.model.CourseSelectionSystem;
 import com.marshmellow.Exception.ClassTimeCollisionError;
 import com.marshmellow.Exception.ExamTimeCollisionError;
+import com.marshmellow.model.Offering;
 import com.marshmellow.model.Student;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
-import java.io.IOException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 
-@WebServlet("/courses")
-public class CoursesController extends HttpServlet {
-    private String searchFilter = "";
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-      if (CourseSelectionSystem.getInstance().getCurrentStudent() == null)
-          response.sendRedirect("/login");
-      else {
-          request.setAttribute("search filter", searchFilter);
-          request.getRequestDispatcher("courses.jsp").forward(request,response);
-      }
+
+@RestController
+@RequestMapping("/courses")
+public class CoursesController {
+    @GetMapping("")
+    public ArrayList<Offering> getCourses(
+            @RequestParam(value = "filter", required = false, defaultValue = "") String filter,
+            @RequestParam(value = "type", required = false, defaultValue = "") String type) {
+        // TODO: number of participants
+        return CourseSelectionSystem.getInstance().getCourses(filter, type);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Student student = CourseSelectionSystem.getInstance().getCurrentStudent();
-        String stdId = student.getStudentId();
-        String action = request.getParameter("action");
-        String destination = "courses.jsp";
-        switch (action){
-            case "remove":
-                try {
-                    CourseSelectionSystem.getInstance().removeFromWeeklySched(stdId,
-                            request.getParameter("course_code"), request.getParameter("class_code"));
-                } catch (Exception exception){
-                    throw new ServletException(exception);
-                }
-                break;
-            case "submit":
-                try {
-                    student.finalizeSelection();
-                    response.sendRedirect("/plan");
-                    return;
-                }catch (Exception exception){
-                    throw new ServletException(exception);
-                }
-            case "reset":
-                student.resetSelection();
-                break;
-            case "search":
-                searchFilter = request.getParameter("search");
-                break;
-            case "clear":
-                searchFilter = "";
-                break;
-            case "add":
-                try {
-                    CourseSelectionSystem.getInstance().addtoWeeklySched(stdId,
-                            request.getParameter("course_code"), request.getParameter("class_code"));
-                }catch(Exception exception){
-                     throw new ServletException(exception);
-                }
-                break;
-            case "queue":
-                try {
-                    student.addToQueue(CourseSelectionSystem.getInstance().getCourse(
-                            request.getParameter("course_code"), request.getParameter("class_code")));
-                } catch(Exception exception){
-                    throw new ServletException(exception);
-                }
-                break;
-            case "remove_queue":
-                try {
-                    student.removeOfferingFromQueue(CourseSelectionSystem.getInstance().getCourse(
-                            request.getParameter("course_code"), request.getParameter("class_code")));
-                } catch(Exception exception){
-                    throw new ServletException(exception);
-                }
-                break;
-
-        }
-        request.setAttribute("search filter",searchFilter);
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(destination);
-        requestDispatcher.forward(request, response);
+    @GetMapping("/{code}/{group}")
+    public Offering getCourse(@PathVariable("code") String code, @PathVariable("group") String group) throws OfferingNotFound {
+        return CourseSelectionSystem.getInstance().getCourse(code, group);
     }
 }
