@@ -147,10 +147,12 @@ public class Offering {
         return classTime;
     }
 
+    @JsonIgnore
     public ArrayList<String> getClassDays() {
         return classTime.days;
     }
 
+    @JsonIgnore
     public String getClassHour() {
         return classTime.time;
     }
@@ -163,10 +165,12 @@ public class Offering {
         return examTime;
     }
 
+    @JsonIgnore
     public Date getExamStart() {
         return examTime.start;
     }
 
+    @JsonIgnore
     public Date getExamEnd() {
         return examTime.end;
     }
@@ -205,6 +209,10 @@ public class Offering {
 
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+    }
+
+    public int getParticipantsCount() {
+        return participants.size();
     }
 
     public ArrayList<String> getPrerequisites() {
