@@ -12,12 +12,14 @@ import java.util.Map;
 
 class Grade {
     public String code;
+    public String name;
     public int grade;
     public int term;
     public int units;
 
-    public Grade(String code, int grade, int term, int units) {
+    public Grade(String code, String name, int grade, int term, int units) {
         this.code = code;
+        this.name = name;
         this.grade = grade;
         this.term = term;
         this.units = units;
@@ -73,7 +75,7 @@ public class Student {
         schedule.removeFromQueue(offering);
     }
 
-    @JsonProperty("schedule")
+    @JsonIgnore
     public WeeklySchedule getWeeklySchedule() {
         return schedule;
     }
@@ -125,10 +127,22 @@ public class Student {
         return unitSum;
     }
 
+    @JsonIgnore
     public Map<String, Integer> getGrades() {
         Map<String, Integer> gradeMap = new HashMap<>();
         for (String s : grades.keySet()) {
             gradeMap.put(s, grades.get(s).grade);
+        }
+        return gradeMap;
+    }
+
+    @JsonProperty("grades")
+    public Map<Integer, ArrayList<Grade>> getDetailedGrades() {
+        Map<Integer, ArrayList<Grade>> gradeMap = new HashMap<>();
+        for (Grade grade : grades.values()) {
+            if (!gradeMap.containsKey(grade.term))
+                gradeMap.put(grade.term, new ArrayList<>());
+            gradeMap.get(grade.term).add(grade);
         }
         return gradeMap;
     }

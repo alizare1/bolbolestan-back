@@ -104,4 +104,16 @@ public class StudentController {
         result.put("unitCount", weeklySchedule.getUnitCount());
         return result;
     }
+
+//    private JsonNode serializeStudent(Student student) {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        ObjectNode studentNode = objectMapper.valueToTree(student);
+//        ArrayNode grades = objectMapper.createArrayNode();
+//        for (JsonNode grade : studentNode.get("grades")) {
+//            ObjectNode newGrade = objectMapper.createObjectNode();
+//            newGrade.set("code", grade.get())
+//        }
+//        studentNode.set("grades", grades);
+//        return studentNode;
+//    }
 }

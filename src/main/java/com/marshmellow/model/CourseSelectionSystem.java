@@ -92,7 +92,8 @@ public class CourseSelectionSystem {
         gradesArr.forEach(grade -> {
             try {
                 int unitCount = this.getCourse(grade.get("code").asText(), "1").getUnits();
-                Grade newGrade = new Grade(grade.get("code").asText(), grade.get("grade").asInt(), grade.get("term").asInt(), unitCount);
+                String name = getCourse(grade.get("code").asText(), "1").getName();
+                Grade newGrade = new Grade(grade.get("code").asText(), name, grade.get("grade").asInt(), grade.get("term").asInt(), unitCount);
                 gradesMap.put(grade.get("code").asText(), newGrade);
             } catch (OfferingNotFound offeringNotFound) {
                 offeringNotFound.printStackTrace();
