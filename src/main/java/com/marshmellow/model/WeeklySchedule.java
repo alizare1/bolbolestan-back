@@ -64,6 +64,13 @@ public class WeeklySchedule {
             else if (newOffer.examTimeCollidesWith(offer2))
                 throw new ExamTimeCollisionError(newOffer.getCode(), offer2.getCode());
         }
+
+        for (Offering offer2 : inProgressWaitingCourses) {
+            if (newOffer.classTimeCollidesWith(offer2))
+                throw new ClassTimeCollisionError(newOffer.getCode(), offer2.getCode());
+            else if (newOffer.examTimeCollidesWith(offer2))
+                throw new ExamTimeCollisionError(newOffer.getCode(), offer2.getCode());
+        }
     }
 
     private void validatePrerequisites(Student student) throws PrerequisitesError{
