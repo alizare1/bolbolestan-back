@@ -1,5 +1,7 @@
 package Utilities;
 
+import org.springframework.http.HttpStatus;
+
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -22,13 +24,16 @@ public class CORSFilter implements Filter {
                          FilterChain chain) throws IOException, ServletException {
 
         ((HttpServletResponse) response).setHeader("Access-Control-Allow-Origin", "*");
+        ((HttpServletResponse) response).setHeader("Access-Control-Allow-Credentials", "true");
+
 
         if (((HttpServletRequest) request).getMethod().equals("OPTIONS")) {
             ((HttpServletResponse) response).setHeader("Access-Control-Allow-Headers", "*");
             ((HttpServletResponse) response).setHeader("Access-Control-Allow-Methods", "*");
-        }
-
-        chain.doFilter(request, response);
+            ((HttpServletResponse) response).setHeader("Access-Control-Max-Age", "1800");
+            ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_ACCEPTED);
+        } else
+            chain.doFilter(request, response);
     }
 
     @Override
