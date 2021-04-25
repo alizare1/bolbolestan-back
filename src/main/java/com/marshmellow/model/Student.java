@@ -58,7 +58,7 @@ public class Student {
     public void validatePrerequisites(Offering offering) throws PrerequisitesError {
         for (String prerequisite : offering.getPrerequisites())
             if (!grades.containsKey(prerequisite) || grades.get(prerequisite).grade < 10)
-                throw new PrerequisitesError(prerequisite);
+                throw new PrerequisitesError(prerequisite, offering.getCode());
     }
 
     public boolean hasPassed(Offering offering) {
