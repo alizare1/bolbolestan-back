@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/students")
+@RequestMapping("/api/students")
 public class StudentController {
     @GetMapping("/{sid}")
     public Student getStudents(@PathVariable("sid") String sid) throws StudentNotFound {

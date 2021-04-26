@@ -19,7 +19,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/courses")
+@RequestMapping("/api/courses")
 public class CoursesController {
     @GetMapping("")
     public ArrayList<Offering> getCourses(
