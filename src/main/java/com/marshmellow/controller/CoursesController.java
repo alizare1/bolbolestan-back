@@ -25,7 +25,7 @@ public class CoursesController {
     public ArrayList<Offering> getCourses(
             @RequestParam(value = "filter", required = false, defaultValue = "") String filter,
             @RequestParam(value = "type", required = false, defaultValue = "") String type) {
-        // TODO: number of participants
+
         return CourseSelectionSystem.getInstance().getCourses(filter, type);
     }
 
