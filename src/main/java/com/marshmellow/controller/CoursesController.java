@@ -8,6 +8,7 @@ import com.marshmellow.Exception.ExamTimeCollisionError;
 import com.marshmellow.model.Offering;
 import com.marshmellow.model.Student;
 
+import com.marshmellow.repository.OfferingRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +25,13 @@ public class CoursesController {
     @GetMapping("")
     public ArrayList<Offering> getCourses(
             @RequestParam(value = "filter", required = false, defaultValue = "") String filter,
-            @RequestParam(value = "type", required = false, defaultValue = "") String type) {
+            @RequestParam(value = "type", required = false, defaultValue = "") String type) throws Exception {
 
-        return CourseSelectionSystem.getInstance().getCourses(filter, type);
+        return OfferingRepository.getInstance().getAllOfferings();
     }
 
     @GetMapping("/{code}/{group}")
-    public Offering getCourse(@PathVariable("code") String code, @PathVariable("group") String group) throws OfferingNotFound {
-        return CourseSelectionSystem.getInstance().getCourse(code, group);
+    public Offering getCourse(@PathVariable("code") String code, @PathVariable("group") String group) throws Exception {
+        return OfferingRepository.getInstance().findById(code, group);
     }
 }
