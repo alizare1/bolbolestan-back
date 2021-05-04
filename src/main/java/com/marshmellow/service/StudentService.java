@@ -13,10 +13,11 @@ public class StudentService {
         StudentRepository studentRepo = StudentRepository.getInstance();
         Offering course = offeringRepo.findById(code, groupCode);
         validateTimeCollisions(sid, course);
-        if (!course.hasCapacity())
-            studentRepo.addCourseToInProgQueue(sid, code, groupCode);
-        else
+        if (offeringRepo.getCapacity(course.getCode(), course.getClassCode()) > offeringRepo.getParticipantsCount(course.getCode(), course.getClassCode()))
             studentRepo.addCourseToInProgCourses(sid, code, groupCode);
+        else
+            studentRepo.addCourseToInProgQueue(sid, code, groupCode);
+
     }
 
     public static void finalizeSelection(String sid) throws Exception {

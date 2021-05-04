@@ -2,7 +2,6 @@ package com.marshmellow.controller;
 
 import com.marshmellow.Exception.OfferingNotFound;
 import com.marshmellow.Exception.StudentNotFound;
-import com.marshmellow.model.CourseSelectionSystem;
 import com.marshmellow.Exception.ClassTimeCollisionError;
 import com.marshmellow.Exception.ExamTimeCollisionError;
 import com.marshmellow.model.Offering;

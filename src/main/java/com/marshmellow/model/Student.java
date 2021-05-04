@@ -24,94 +24,6 @@ public class Student {
     private String status;
     private String img;
     private Map<String, Grade> grades = new HashMap<>();
-    private final WeeklySchedule schedule = new WeeklySchedule();
-
-    public void addOffering(Offering offering) throws Exception {
-        if (!offering.hasCapacity())
-            addToQueue(offering);
-        else
-            schedule.addOffering(offering);
-    }
-
-    public void addToQueue(Offering offering) throws Exception {
-        schedule.addToQueue(offering);
-    }
-
-    public void submitFromQueue(Offering offering) {
-        schedule.submitFromQueue(offering);
-    }
-
-    public void validatePrerequisites(Offering offering) throws PrerequisitesError {
-        for (String prerequisite : offering.getPrerequisites())
-            if (!grades.containsKey(prerequisite) || grades.get(prerequisite).grade < 10)
-                throw new PrerequisitesError(prerequisite, offering.getCode());
-    }
-
-    public boolean hasPassed(Offering offering) {
-        if (grades.containsKey(offering.getCode()))
-            return grades.get(offering.getCode()).grade >= 10;
-        return false;
-    }
-
-    public void removeOffering(Offering offering) throws OfferingNotFound {
-        schedule.removeOffering(offering);
-    }
-
-    public void removeOfferingFromQueue(Offering offering) throws OfferingNotFound {
-        schedule.removeFromQueue(offering);
-    }
-
-    @JsonIgnore
-    public WeeklySchedule getWeeklySchedule() {
-        return schedule;
-    }
-
-    @JsonIgnore
-    public ArrayList<Offering> getSchedule() {
-        return schedule.getSchedule();
-    }
-
-    @JsonIgnore
-    public ArrayList<Offering> getInProgressSchedule() {
-        return schedule.getInProgressCourses();
-    }
-
-    @JsonIgnore
-    public ArrayList<Offering> getInProgressQueue() {
-        return schedule.getInProgressQueue();
-    }
-
-    public void finalizeSelection() throws MinimumUnitsError, MaximumUnitsError,
-            CapacityError, PrerequisitesError, AlreadyPassedError {
-        schedule.finalizeSelection(this);
-    }
-
-    public void resetSelection() {
-        schedule.resetSelection();
-    }
-
-    public int getCurrentUnitCount() {
-        return schedule.getUnitCount();
-    }
-
-    public float getGpa() {
-        float gradeSum = 0;
-        int unitSum = 0;
-        for (Grade courseGrade : grades.values()) {
-            gradeSum += courseGrade.grade * courseGrade.units;
-            unitSum += courseGrade.units;
-        }
-        return gradeSum / unitSum;
-    }
-
-    public int getPassedUnitsCount() {
-        int unitSum = 0;
-        for (Grade courseGrade : grades.values()) {
-            if (courseGrade.grade >= 10)
-                unitSum += courseGrade.units;
-        }
-        return unitSum;
-    }
 
     @JsonIgnore
     public ArrayList<Grade> getGrades() {
@@ -237,7 +149,6 @@ public class Student {
                 ", name='" + name + '\'' +
                 ", secondName='" + secondName + '\'' +
                 ", birthDate='" + birthDate + '\'' +
-                ", schedule=" + schedule +
                 '}';
     }
 }

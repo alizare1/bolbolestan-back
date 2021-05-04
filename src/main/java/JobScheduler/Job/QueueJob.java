@@ -1,11 +1,9 @@
 package JobScheduler.Job;
 
-import com.marshmellow.model.CourseSelectionSystem;
 import com.marshmellow.model.Offering;
 import com.marshmellow.repository.OfferingRepository;
 import com.marshmellow.repository.StudentRepository;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class QueueJob implements Runnable {

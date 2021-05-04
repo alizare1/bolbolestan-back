@@ -21,14 +21,8 @@ public class Offering {
     private ExamTime examTime = new ExamTime();
     private int capacity;
     private ArrayList<String> prerequisites;
-    private final Queue<Student> waitingQueue = new LinkedList<>();
     @JsonIgnore
-    private final ArrayList<Student> participants = new ArrayList<>();
     private int participantsCount = 0;
-
-    public boolean hasCapacity() {
-        return participants.size() < capacity;
-    }
 
     public boolean classTimeCollidesWith(Offering other) {
         return this.getClassTime().collides(other.getClassTime());
@@ -41,33 +35,6 @@ public class Offering {
     public int getUnits() {
         return units;
     }
-
-    public void addParticipant(Student student) {
-        if(!participants.contains(student))
-            participants.add(student);
-    }
-
-    public void addToQueue(Student student) {
-        waitingQueue.add(student);
-        capacity++;
-    }
-
-    public void handleQueue() {
-        while (hasCapacity() && !waitingQueue.isEmpty()) {
-            Student student = waitingQueue.remove();
-            addParticipant(student);
-            student.submitFromQueue(this);
-        }
-    }
-
-    public void removeParticipant(Student student){
-        participants.removeIf(s -> s.getStudentId().equals(student.getStudentId()));
-    }
-
-    public void removeFromQueue(Student student) {
-        waitingQueue.remove(student);
-    }
-    public int signedUp(){return participants.size();}
 
     public String getClassCode() {
         return classCode;
@@ -218,7 +185,6 @@ public class Offering {
                 ", examTime=" + examTime +
                 ", capacity=" + capacity +
                 ", prerequisites=" + prerequisites +
-                ", participants=" + participants +
                 '}';
     }
 }

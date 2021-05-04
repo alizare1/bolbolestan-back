@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marshmellow.Exception.StudentNotFound;
-import com.marshmellow.model.CourseSelectionSystem;
 import com.marshmellow.model.Offering;
 import com.marshmellow.model.Student;
 import com.marshmellow.repository.OfferingRepository;
