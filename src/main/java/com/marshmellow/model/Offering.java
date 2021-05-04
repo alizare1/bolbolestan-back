@@ -72,13 +72,14 @@ public class Offering {
     private String instructor;
     private int units;
     private String type;
-    private ClassTime classTime;
-    private ExamTime examTime;
+    private ClassTime classTime = new ClassTime();
+    private ExamTime examTime = new ExamTime();
     private int capacity;
     private ArrayList<String> prerequisites;
     private final Queue<Student> waitingQueue = new LinkedList<>();
     @JsonIgnore
     private final ArrayList<Student> participants = new ArrayList<>();
+    private int participantsCount = 0;
 
     public boolean hasCapacity() {
         return participants.size() < capacity;
@@ -153,8 +154,18 @@ public class Offering {
     }
 
     @JsonIgnore
+    public void setClassDays(ArrayList<String> days) {
+        classTime.days = days;
+    }
+
+    @JsonIgnore
     public String getClassHour() {
         return classTime.time;
+    }
+
+    @JsonIgnore
+    public void setClassHour(String time) {
+        classTime.time = time;
     }
 
     public void setClassTime(ClassTime classTime) {
@@ -177,6 +188,16 @@ public class Offering {
 
     public void setExamTime(ExamTime examTime) {
         this.examTime = examTime;
+    }
+
+    @JsonIgnore
+    public void setExamStart(Date date) {
+        examTime.start = date;
+    }
+
+    @JsonIgnore
+    public void setExamEnd(Date date) {
+        examTime.end = date;
     }
 
     public String getCode() {
@@ -212,7 +233,11 @@ public class Offering {
     }
 
     public int getParticipantsCount() {
-        return participants.size();
+        return participantsCount;
+    }
+
+    public void setParticipantsCount(int participantsCount) {
+        this.participantsCount = participantsCount;
     }
 
     public ArrayList<String> getPrerequisites() {
