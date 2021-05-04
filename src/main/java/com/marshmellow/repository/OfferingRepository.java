@@ -1,9 +1,15 @@
 package com.marshmellow.repository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marshmellow.model.Offering;
 import com.marshmellow.model.Student;
 import org.apache.commons.dbutils.DbUtils;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +19,9 @@ public class OfferingRepository {
     private static final String TABLE_NAME = "Course";
     private static OfferingRepository instance;
 
-    public static OfferingRepository getInstance() {
+    private static final String API_COURSES = "http://138.197.181.131:5100/api/courses";
+
+    public static OfferingRepository getInstance() throws Exception {
         if (instance == null) {
             try {
                 instance = new OfferingRepository();
@@ -25,7 +33,7 @@ public class OfferingRepository {
         return instance;
     }
 
-    private OfferingRepository() throws SQLException {
+    private OfferingRepository() throws Exception {
         Connection con = ConnectionPool.getConnection();
         Statement createTableStatement = con.createStatement();
         con.setAutoCommit(false);
@@ -49,6 +57,25 @@ public class OfferingRepository {
         con.commit();
         createTableStatement.close();
         con.close();
+
+        Offering[] courses = getOfferingsFromAPI();
+        for (Offering c : courses) {
+            insert(c);
+        }
+        for (Offering c : courses) {
+            insertPrerequisites(c);
+        }
+    }
+
+    private Offering[] getOfferingsFromAPI() throws IOException, InterruptedException {
+        var client = HttpClient.newHttpClient();
+        var coursesReq = HttpRequest.newBuilder(
+                URI.create(API_COURSES)
+        ).build();
+
+        HttpResponse<String> coursesRes = client.send(coursesReq, HttpResponse.BodyHandlers.ofString());
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(coursesRes.body(), Offering[].class);
     }
 
     protected String getFindByIdStatement() {
@@ -132,6 +159,30 @@ public class OfferingRepository {
         Connection con = ConnectionPool.getConnection();
         PreparedStatement st = con.prepareStatement("SELECT P.pCode FROM Prerequisites P WHERE P.code = ?");
         st.setString(1, code);
+        try {
+            ResultSet resultSet = st.executeQuery();
+            if (resultSet == null) {
+                return new ArrayList<>();
+            }
+            ArrayList<String> result = new ArrayList<>();
+            while (resultSet.next()) {
+                result.add(resultSet.getString(1));
+            }
+            return result;
+        } catch (Exception e) {
+            System.out.println("Exception in get getPrerequisites");
+            throw e;
+        } finally {
+            DbUtils.close(st);
+            DbUtils.close(con);
+        }
+    }
+
+    public ArrayList<String> getWaitingList(String code, String classCode) throws Exception {
+        Connection con = ConnectionPool.getConnection();
+        PreparedStatement st = con.prepareStatement("SELECT Q.sid FROM WaitQueue Q WHERE Q.code = ? AND Q.classCode = ?");
+        st.setString(1, code);
+        st.setString(2, classCode);
         try {
             ResultSet resultSet = st.executeQuery();
             if (resultSet == null) {

@@ -1,11 +1,19 @@
 package com.marshmellow.repository;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marshmellow.Exception.OfferingNotFound;
 import com.marshmellow.Exception.StudentNotFound;
 import com.marshmellow.model.Grade;
 import com.marshmellow.model.Offering;
 import com.marshmellow.model.Student;
 import org.apache.commons.dbutils.DbUtils;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +23,9 @@ import java.util.Queue;
 public class StudentRepository {
     private static final String TABLE_NAME = "Student";
     private static StudentRepository instance;
+
+    private static final String API_STUDENTS = "http://138.197.181.131:5100/api/students";
+    private static final String API_GRADE = "http://138.197.181.131:5100/api/grades/";
 
     private static final String IN_PROG_ST = "INSERT INTO InProgressCourses(sid, code, classCode) "
             + " VALUES(?,?,?)"
@@ -41,7 +52,7 @@ public class StudentRepository {
     public static final String CLR_IN_PROG_QUEUE = "DELETE FROM InProgressQueue WHERE sid = ?;";
     public static final String CLR_QUEUE = "DELETE FROM WaitQueue WHERE sid = ?;";
 
-    public static StudentRepository getInstance() {
+    public static StudentRepository getInstance() throws Exception {
         if (instance == null) {
             try {
                 instance = new StudentRepository();
@@ -53,7 +64,7 @@ public class StudentRepository {
         return instance;
     }
 
-    private StudentRepository() throws SQLException {
+    private StudentRepository() throws Exception {
         Connection con = ConnectionPool.getConnection();
         Statement createTableStatement = con.createStatement();
         createTableStatement.addBatch(
@@ -95,6 +106,43 @@ public class StudentRepository {
         createTableStatement.executeBatch();
         createTableStatement.close();
         con.close();
+
+        Student[] students = getStudentsFromAPI();
+        for (Student student : students)
+            setGrades(student);
+
+        for (Student s : students) {
+            insert(s);
+            insertGrades(s);
+        }
+    }
+
+    private Student[] getStudentsFromAPI() throws IOException, InterruptedException {
+        var client = HttpClient.newHttpClient();
+        var studentsReq = HttpRequest.newBuilder(
+                URI.create(API_STUDENTS)
+        ).build();
+
+        HttpResponse<String> studentsRes = client.send(studentsReq, HttpResponse.BodyHandlers.ofString());
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(studentsRes.body(), Student[].class);
+    }
+
+    private void setGrades(Student student) throws IOException, InterruptedException {
+        var client = HttpClient.newHttpClient();
+        ObjectMapper objectMapper = new ObjectMapper();
+        var gradesReq = HttpRequest.newBuilder(
+                URI.create(API_GRADE + student.getStudentId())
+        ).build();
+        HttpResponse<String> gradesRes = client.send(gradesReq, HttpResponse.BodyHandlers.ofString());
+        JsonNode gradesArr = objectMapper.readTree(gradesRes.body());
+
+        ArrayList<Grade> grades = new ArrayList<>();
+        gradesArr.forEach(grade -> {
+                Grade newGrade = new Grade(grade.get("code").asText(), "", grade.get("grade").asInt(), grade.get("term").asInt(), 0);
+                grades.add(newGrade);
+        });
+        student.setGrades(grades);
     }
 
     protected String getFindByIdStatement() {
