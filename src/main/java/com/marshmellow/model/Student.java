@@ -10,34 +10,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-class Grade {
-    public String code;
-    public String name;
-    public int grade;
-    public int term;
-    public int units;
-
-    public Grade(String code, String name, int grade, int term, int units) {
-        this.code = code;
-        this.name = name;
-        this.grade = grade;
-        this.term = term;
-        this.units = units;
-    }
-}
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Student {
     private String studentId;
     private String name;
     private String secondName;
+    private String email;
+    private String password;
     private String birthDate;
     private String field;
     private String faculty;
     private String level;
     private String status;
     private String img;
-    private Map<String, Grade> grades;
+    private Map<String, Grade> grades = new HashMap<>();
     private final WeeklySchedule schedule = new WeeklySchedule();
 
     public void addOffering(Offering offering) throws Exception {
@@ -128,12 +114,8 @@ public class Student {
     }
 
     @JsonIgnore
-    public Map<String, Integer> getGrades() {
-        Map<String, Integer> gradeMap = new HashMap<>();
-        for (String s : grades.keySet()) {
-            gradeMap.put(s, grades.get(s).grade);
-        }
-        return gradeMap;
+    public ArrayList<Grade> getGrades() {
+        return new ArrayList<>(grades.values());
     }
 
     @JsonProperty("grades")
@@ -149,6 +131,13 @@ public class Student {
 
     public void setGrades(Map<String, Grade> grades) {
         this.grades = grades;
+    }
+
+    @JsonIgnore
+    public void setGrades(ArrayList<Grade> gradesArr) {
+        for (Grade grade : gradesArr) {
+            grades.put(grade.code, grade);
+        }
     }
 
     @JsonProperty("id")
@@ -175,6 +164,22 @@ public class Student {
 
     public void setSecondName(String secondName) {
         this.secondName = secondName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getBirthDate() {

@@ -9,61 +9,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-class ExamTime {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    public Date start;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    public Date end;
-
-    public boolean collides(ExamTime other) {
-        return this.start.compareTo(other.end) < 0 && this.end.compareTo(other.start) > 0;
-    }
-
-    @Override
-    public String toString() {
-        return "ExamTime{" +
-                "start='" + start + '\'' +
-                ", end='" + end + '\'' +
-                '}';
-    }
-}
-class ClassTime {
-    public ArrayList<String> days;
-    public String time;
-
-    private Date getDate(String str) {
-        DateFormat format1 = new SimpleDateFormat("HH:mm");
-        DateFormat format2 = new SimpleDateFormat("HH");
-        try {
-            if (str.contains(":")) {
-                return format1.parse(str);
-            }
-            return format2.parse(str);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public boolean collides(ClassTime other) {
-        if (Collections.disjoint(days, other.days))
-            return false;
-        String[] thisTime = time.split("-", 2);
-        String[] otherTime = other.time.split("-", 2);
-
-        return getDate(thisTime[0]).compareTo(getDate(otherTime[1])) < 0
-                && getDate(thisTime[1]).compareTo(getDate(otherTime[0])) > 0;
-    }
-
-    @Override
-    public String toString() {
-        return "ClassTime{" +
-                "days=" + days +
-                ", time='" + time + '\'' +
-                '}';
-    }
-}
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Offering {
     private String code;
@@ -246,6 +191,18 @@ public class Offering {
 
     public void setPrerequisites(ArrayList<String> prerequisites) {
         this.prerequisites = prerequisites;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof Offering))
+            return false;
+
+        Offering other = (Offering) o;
+        return code.equals(other.getCode()) && classCode.equals(other.getClassCode());
     }
 
     @Override

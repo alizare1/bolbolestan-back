@@ -5,35 +5,37 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marshmellow.Exception.OfferingNotFound;
 import com.marshmellow.Exception.StudentNotFound;
 import com.marshmellow.model.CourseSelectionSystem;
 import com.marshmellow.model.Offering;
 import com.marshmellow.model.Student;
-import com.marshmellow.model.WeeklySchedule;
-import org.springframework.http.HttpStatus;
+import com.marshmellow.repository.OfferingRepository;
+import com.marshmellow.repository.StudentRepository;
+import com.marshmellow.service.StudentService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/students")
 public class StudentController {
     @GetMapping("/{sid}")
-    public Student getStudents(@PathVariable("sid") String sid) throws StudentNotFound {
-        return CourseSelectionSystem.getInstance().getStudent(sid);
+    public Student getStudents(@PathVariable("sid") String sid) throws StudentNotFound, Exception {
+        return StudentRepository.getInstance().findById(sid);
     }
 
     @GetMapping("/{sid}/plan")
-    public ArrayList<Offering> getPlan(@PathVariable("sid") String sid) throws StudentNotFound {
-        return CourseSelectionSystem.getInstance().getStudent(sid).getSchedule();
+    public ArrayList<Offering> getPlan(@PathVariable("sid") String sid) throws StudentNotFound, Exception {
+        ArrayList<Offering> courses = new ArrayList<>();
+        for (String[] c : StudentRepository.getInstance().getSubmittedCourses(sid)) {
+            courses.add(OfferingRepository.getInstance().findById(c[0], c[1]));
+        }
+        return courses;
     }
 
     @GetMapping("/{sid}/schedule")
-    public JsonNode getSchedule(@PathVariable("sid") String sid) throws StudentNotFound {
-        return serializeSchedule(CourseSelectionSystem.getInstance().getStudent(sid).getWeeklySchedule());
+    public JsonNode getSchedule(@PathVariable("sid") String sid) throws StudentNotFound, Exception {
+        return getScheduleFromRepo(sid);
     }
 
     @PostMapping("/{sid}/schedule")
@@ -43,42 +45,57 @@ public class StudentController {
         if (!body.has("code") || !body.has("group"))
             throw new Exception("Missing Parameter");
 
-        Offering course = CourseSelectionSystem.getInstance().getCourse(body.get("code").asText(),
-                body.get("group").asText());
-        Student student = CourseSelectionSystem.getInstance().getStudent(sid);
-        student.addOffering(course);
-        return serializeSchedule(CourseSelectionSystem.getInstance().getStudent(sid).getWeeklySchedule());
+        StudentService.addToSchedule(sid, body.get("code").asText(), body.get("group").asText());
+        return getScheduleFromRepo(sid);
     }
 
     @DeleteMapping("/{sid}/schedule")
     public JsonNode resetSelection(@PathVariable("sid") String sid) throws Exception {
-        Student student = CourseSelectionSystem.getInstance().getStudent(sid);
-        student.resetSelection();
-        return serializeSchedule(student.getWeeklySchedule());
+        StudentRepository repo = StudentRepository.getInstance();
+        repo.clearInProgCourses(sid);
+        repo.clearInProgQueue(sid);
+        for (String[] c : repo.getSubmittedCourses(sid)) {
+            repo.addCourseToInProgCourses(sid, c[0], c[1]);
+        }
+        for (String[] c : repo.getQueueCourses(sid)) {
+            repo.addCourseToInProgQueue(sid, c[0], c[1]);
+        }
+        return getScheduleFromRepo(sid);
     }
 
     @DeleteMapping("/{sid}/schedule/{code}/{group}")
     public JsonNode removeFromSchedule(@PathVariable("sid") String sid,
         @PathVariable("code") String code, @PathVariable("group") String group) throws Exception {
-        Student student = CourseSelectionSystem.getInstance().getStudent(sid);
-        Offering course = CourseSelectionSystem.getInstance().getCourse(code, group);
-        student.removeOffering(course);
-        return serializeSchedule(student.getWeeklySchedule());
+        StudentRepository repo = StudentRepository.getInstance();
+        repo.removeCourseFromInProg(sid, code, group);
+        repo.removeCourseFromInProgQueue(sid, code, group);
+        return getScheduleFromRepo(sid);
     }
 
     @PostMapping("/{sid}/schedule/finalize")
     public JsonNode finalize(@PathVariable("sid") String sid) throws Exception {
-        Student student = CourseSelectionSystem.getInstance().getStudent(sid);
-        student.finalizeSelection();
-        return serializeSchedule(student.getWeeklySchedule());
+        StudentService.finalizeSelection(sid);
+        return getScheduleFromRepo(sid);
     }
 
-    private JsonNode serializeSchedule(WeeklySchedule weeklySchedule) {
+    private JsonNode getScheduleFromRepo(String sid) throws Exception {
+        ArrayList<Offering> submitted = StudentService.getOfferingArrayList(
+                StudentRepository.getInstance().getSubmittedCourses(sid));
+
+        ArrayList<Offering> inProgress = StudentService.getOfferingArrayList(
+                StudentRepository.getInstance().getInProgCourses(sid));
+
+        ArrayList<Offering> queue = StudentService.getOfferingArrayList(
+                StudentRepository.getInstance().getInProgQueueCourses(sid));
+
+        int unitCount = StudentRepository.getInstance().getInProgUnitCount(sid);
+
+        return serializeSchedule(unitCount, submitted, inProgress, queue);
+    }
+
+    private JsonNode serializeSchedule(int unitCount, ArrayList<Offering> submitted, ArrayList<Offering> inProgress, ArrayList<Offering> queue) {
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode coursesArr = objectMapper.createArrayNode();
-        ArrayList<Offering> submitted = weeklySchedule.getSchedule();
-        ArrayList<Offering> inProgress = weeklySchedule.getInProgressCourses();
-        ArrayList<Offering> queue = weeklySchedule.getInProgressQueue();
         for (Offering course : inProgress) {
             ObjectNode courseDetails = objectMapper.valueToTree(course);
             if (submitted.contains(course))
@@ -101,19 +118,7 @@ public class StudentController {
         }
         ObjectNode result = objectMapper.createObjectNode();
         result.set("courses", coursesArr);
-        result.put("unitCount", weeklySchedule.getUnitCount());
+        result.put("unitCount", unitCount);
         return result;
     }
-
-//    private JsonNode serializeStudent(Student student) {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        ObjectNode studentNode = objectMapper.valueToTree(student);
-//        ArrayNode grades = objectMapper.createArrayNode();
-//        for (JsonNode grade : studentNode.get("grades")) {
-//            ObjectNode newGrade = objectMapper.createObjectNode();
-//            newGrade.set("code", grade.get())
-//        }
-//        studentNode.set("grades", grades);
-//        return studentNode;
-//    }
 }

@@ -36,6 +36,10 @@ public class StudentRepository {
     public static final String GET_SUBMIT = "SELECT C.code, C.classCode FROM SubmittedCourses C WHERE C.sid = ?;";
     public static final String GET_IN_PROG_QUEUE = "SELECT C.code, C.classCode FROM InProgressQueue C WHERE C.sid = ?;";
     public static final String GET_QUEUE  = "SELECT C.code, C.classCode FROM WaitQueue C WHERE C.sid = ?;";
+    public static final String CLR_IN_PROG = "DELETE FROM InProgressCourses WHERE sid = ?;";
+    public static final String CLR_SUBMIT = "DELETE FROM SubmittedCourses WHERE sid = ?;";
+    public static final String CLR_IN_PROG_QUEUE = "DELETE FROM InProgressQueue WHERE sid = ?;";
+    public static final String CLR_QUEUE = "DELETE FROM WaitQueue WHERE sid = ?;";
 
     public static StudentRepository getInstance() {
         if (instance == null) {
@@ -76,7 +80,7 @@ public class StudentRepository {
                    "FOREIGN KEY (code, classCode) REFERENCES Course(code, classCode));"
         );
         createTableStatement.addBatch(
-                "CREATE TABLE IF NOT EXISTS inProgressQueue(sid CHAR(50), code CHAR(50), classCode CHAR(10), " +
+                "CREATE TABLE IF NOT EXISTS InProgressQueue(sid CHAR(50), code CHAR(50), classCode CHAR(10), " +
                         "PRIMARY KEY(sid, code, classCode)," +
                         "FOREIGN KEY (sid) REFERENCES Student(id)," +
                         "FOREIGN KEY (code, classCode) REFERENCES Course(code, classCode));"
@@ -255,6 +259,22 @@ public class StudentRepository {
         }
     }
 
+    private void clearList(String statement, String sid) throws Exception {
+        Connection con = ConnectionPool.getConnection();
+        PreparedStatement st = con.prepareStatement(statement);
+        st.setString(1, sid);
+
+        try {
+            st.execute();
+        } catch (Exception e) {
+            System.out.println("error in clear list.insert query.");
+            e.printStackTrace();
+        } finally {
+            DbUtils.close(st);
+            DbUtils.close(con);
+        }
+    }
+
     public void addCourseToInProgCourses(String sid, String code, String classCode) throws Exception {
         runCourseQuery(IN_PROG_ST, sid, code, classCode);
     }
@@ -303,6 +323,34 @@ public class StudentRepository {
         return getCourseListQuery(GET_QUEUE, sid);
     }
 
+    public void clearInProgCourses(String sid) throws Exception {
+        clearList(CLR_IN_PROG, sid);
+    }
+
+    public void clearSubmittedCourses(String sid) throws Exception {
+        clearList(CLR_SUBMIT, sid);
+    }
+
+    public void clearInProgQueue(String sid) throws Exception {
+        clearList(CLR_IN_PROG_QUEUE, sid);
+    }
+
+    public void clearQueue(String sid) throws Exception {
+        clearList(CLR_QUEUE, sid);
+    }
+
+    public ArrayList<String[]> getNewlyAddedCourses(String sid) throws Exception {
+        return getCourseListQuery("SELECT I.code, I.classCode FROM InProgressCourses I WHERE I.sid = ? " +
+                "AND NOT EXISTS (SELECT S.code, S.classCode " +
+                "FROM SubmittedCourses S WHERE S.code = I.code AND S.classCode = I.classCode);", sid);
+    }
+
+    public ArrayList<String[]> getRemovedCourses(String sid) throws Exception {
+        return getCourseListQuery("SELECT I.code, I.classCode FROM SubmittedCourses I WHERE I.sid = ? " +
+                "AND NOT EXISTS (SELECT S.code, S.classCode " +
+                "FROM InProgressCourses S WHERE S.code = I.code AND S.classCode = I.classCode);", sid);
+    }
+
     public int getInProgUnitCount(String sid) throws Exception {
         Connection con = ConnectionPool.getConnection();
         PreparedStatement st = con.prepareStatement(
@@ -315,6 +363,52 @@ public class StudentRepository {
                 return resultSet.getInt(1);
             }
             return 0;
+        } catch (Exception e) {
+            System.out.println("error in unit count.find query.");
+            e.printStackTrace();
+            throw e;
+        } finally {
+            DbUtils.close(st);
+            DbUtils.close(con);
+        }
+    }
+
+    public int getInProgWaitUnitCount(String sid) throws Exception {
+        Connection con = ConnectionPool.getConnection();
+        PreparedStatement st = con.prepareStatement(
+                "SELECT SUM(C.units) FROM InProgressQueue P, Course C " +
+                        "WHERE P.sid = ? AND C.code = P.code AND C.classCode = P.classCode");
+        st.setString(1, sid);
+        try {
+            ResultSet resultSet = st.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+            return 0;
+        } catch (Exception e) {
+            System.out.println("error in unit count.find query.");
+            e.printStackTrace();
+            throw e;
+        } finally {
+            DbUtils.close(st);
+            DbUtils.close(con);
+        }
+    }
+
+    public ArrayList<String> getPassedCourses(String sid) throws Exception {
+        Connection con = ConnectionPool.getConnection();
+        PreparedStatement st = con.prepareStatement("SELECT G.code FROM Grade G WHERE G.sid = ? AND G.grade >= 10");
+        st.setString(1, sid);
+        try {
+            ArrayList<String> codes = new ArrayList<>();
+            ResultSet resultSet = st.executeQuery();
+            if (resultSet == null) {
+                return new ArrayList<>();
+            }
+            while (resultSet.next()) {
+                codes.add(resultSet.getString(1));
+            }
+            return codes;
         } catch (Exception e) {
             System.out.println("error in unit count.find query.");
             e.printStackTrace();

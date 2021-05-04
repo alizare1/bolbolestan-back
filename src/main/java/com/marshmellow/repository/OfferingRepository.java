@@ -266,6 +266,22 @@ public class OfferingRepository {
         }
     }
 
+    public int getCapacity(String code, String classCode) throws Exception {
+        Connection con = ConnectionPool.getConnection();
+        PreparedStatement st = con.prepareStatement("SELECT C.capacity FROM Course C WHERE C.code = ? AND C.classCode = ?;");
+        st.setString(1, code);
+        st.setString(2, classCode);
+        try {
+            ResultSet rs = st.executeQuery();
+            if (rs.next())
+                return rs.getInt(1);
+            return -1;
+        } finally {
+            DbUtils.close(st);
+            DbUtils.close(con);
+        }
+    }
+
     public void testt() throws Exception {
         Connection con = ConnectionPool.getConnection();
         Statement st = con.createStatement();
