@@ -311,6 +311,8 @@ public class OfferingRepository {
             if (rs.next())
                 return rs.getInt(1);
             return -1;
+        } catch (SQLSyntaxErrorException e) {
+            return 0;
         } finally {
             DbUtils.close(st);
             DbUtils.close(con);
