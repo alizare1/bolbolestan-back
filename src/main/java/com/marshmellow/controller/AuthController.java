@@ -39,6 +39,22 @@ public class AuthController {
         return resp;
     }
 
+    @PostMapping("signup")
+    public void signup(@RequestBody String body) throws Exception {
+
+        StudentRepository repo = StudentRepository.getInstance();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Student newStudent = objectMapper.readValue(body, Student.class);
+        if (repo.findById(newStudent.getStudentId()) != null) {
+            throw new Exception("Student with this id exists");
+        }
+        if (repo.findByEmail(newStudent.getEmail()) != null) {
+            throw new Exception("Student with this email exists");
+        }
+
+        StudentRepository.getInstance().insert(newStudent);
+    }
+
     private String createToken(String sid) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DAY_OF_MONTH, 1);
