@@ -16,10 +16,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PrimitiveIterator;
-import java.util.Queue;
+import java.util.*;
 
 public class StudentRepository {
     private static final String TABLE_NAME = "Student";
@@ -470,6 +467,26 @@ public class StudentRepository {
         }
     }
 
+    public Student findByEmail(String email) throws Exception {
+        Connection con = ConnectionPool.getConnection();
+        PreparedStatement st = con.prepareStatement("SELECT * FROM Student WHERE email = ?");
+        st.setString(1, email);
+        try {
+            ResultSet resultSet = st.executeQuery();
+            if (!resultSet.next()) {
+                return null;
+            }
+            return convertResultSetToDomainModel(resultSet);
+        } catch (Exception e) {
+            System.out.println("error in CourseRepository.find query.");
+            e.printStackTrace();
+            throw e;
+        } finally {
+            DbUtils.close(st);
+            DbUtils.close(con);
+        }
+    }
+
     public Student findById(String id) throws Exception {
         Connection con = ConnectionPool.getConnection();
         PreparedStatement st = con.prepareStatement(getFindByIdStatement());
@@ -477,7 +494,7 @@ public class StudentRepository {
         try {
             ResultSet resultSet = st.executeQuery();
             if (!resultSet.next()) {
-                throw new StudentNotFound();
+                return null;
             }
             return convertResultSetToDomainModel(resultSet);
         } catch (Exception e) {
