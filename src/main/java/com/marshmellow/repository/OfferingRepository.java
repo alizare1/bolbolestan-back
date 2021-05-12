@@ -19,7 +19,7 @@ public class OfferingRepository {
     private static final String TABLE_NAME = "Course";
     private static OfferingRepository instance;
 
-    private static final String API_COURSES = "http://138.197.181.131:5100/api/courses";
+    private static final String API_COURSES = "http://138.197.181.131:5200/api/courses";
 
     public static OfferingRepository getInstance() throws Exception {
         if (instance == null) {

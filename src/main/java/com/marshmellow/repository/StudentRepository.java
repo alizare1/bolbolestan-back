@@ -8,6 +8,7 @@ import com.marshmellow.model.Grade;
 import com.marshmellow.model.Offering;
 import com.marshmellow.model.Student;
 import org.apache.commons.dbutils.DbUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,8 +25,8 @@ public class StudentRepository {
     private static final String TABLE_NAME = "Student";
     private static StudentRepository instance;
 
-    private static final String API_STUDENTS = "http://138.197.181.131:5100/api/students";
-    private static final String API_GRADE = "http://138.197.181.131:5100/api/grades/";
+    private static final String API_STUDENTS = "http://138.197.181.131:5200/api/students";
+    private static final String API_GRADE = "http://138.197.181.131:5200/api/grades/";
 
     private static final String IN_PROG_ST = "INSERT INTO InProgressCourses(sid, code, classCode) "
             + " VALUES(?,?,?)"
@@ -166,7 +167,9 @@ public class StudentRepository {
         st.setString(2, data.getName());
         st.setString(3, data.getSecondName());
         st.setString(4, data.getEmail());
-        st.setString(5, data.getPassword());
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String pw = encoder.encode(data.getPassword());
+        st.setString(5, pw);
         st.setString(6, data.getBirthDate());
         st.setString(7, data.getField());
         st.setString(8, data.getFaculty());
