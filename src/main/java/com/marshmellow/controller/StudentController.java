@@ -20,7 +20,10 @@ import java.util.ArrayList;
 public class StudentController {
     @GetMapping("/{sid}")
     public Student getStudents(@PathVariable("sid") String sid) throws StudentNotFound, Exception {
-        return StudentRepository.getInstance().findById(sid);
+        Student student = StudentRepository.getInstance().findById(sid);
+        if (student == null)
+            throw new StudentNotFound();
+        return student;
     }
 
     @GetMapping("/{sid}/plan")
