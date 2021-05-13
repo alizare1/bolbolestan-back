@@ -45,6 +45,7 @@ public class AuthController {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode resp = objectMapper.createObjectNode();
         resp.put("token", jwt);
+        resp.put("sid", student.getStudentId());
         return resp;
     }
 
