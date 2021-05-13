@@ -21,7 +21,6 @@ public class Offering {
     private ExamTime examTime = new ExamTime();
     private int capacity;
     private ArrayList<String> prerequisites;
-    @JsonIgnore
     private int participantsCount = 0;
 
     public boolean classTimeCollidesWith(Offering other) {
