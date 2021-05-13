@@ -70,7 +70,7 @@ public class AuthController {
     public JsonNode sendPasswordResetUrl(@RequestBody JsonNode body) throws Exception {
         if (!body.has("email"))
             throw new Exception("Missing Parameter");
-        String resetUrl = "127.0.0.1:5000/setPassword/" + createPasswordResetToken(body.get("email").asText());
+        String resetUrl = "127.0.0.1:3000/setNewPassword/" + createPasswordResetToken(body.get("email").asText());
         sendResetPasswordMail(body.get("email").asText(), resetUrl);
         return createSuccessResponse("email sent");
     }
