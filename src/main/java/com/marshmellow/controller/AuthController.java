@@ -37,6 +37,8 @@ public class AuthController {
             throw new Exception("Missing Parameter");
 
         Student student = StudentRepository.getInstance().findByEmail(body.get("email").asText());
+        if (student == null)
+            throw new Exception("No user found with this email");
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if (!encoder.matches(body.get("password").asText(), student.getPassword()))
             throw new WrongPasswordError();
