@@ -487,6 +487,23 @@ public class StudentRepository {
         }
     }
 
+    public void updatePassword(String email, String password) throws Exception {
+        Connection con = ConnectionPool.getConnection();
+        PreparedStatement st = con.prepareStatement("UPDATE Student SET password = ? WHERE email = ?");
+        st.setString(1, password);
+        st.setString(2, email);
+        try {
+            st.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("error in updatePassword.find query.");
+            e.printStackTrace();
+            throw e;
+        } finally {
+            DbUtils.close(st);
+            DbUtils.close(con);
+        }
+    }
+
     public Student findById(String id) throws Exception {
         Connection con = ConnectionPool.getConnection();
         PreparedStatement st = con.prepareStatement(getFindByIdStatement());
