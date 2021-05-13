@@ -80,7 +80,7 @@ public class StudentService {
     private static void validateCapacity(String sid) throws Exception {
         for (String[] c : StudentRepository.getInstance().getNewlyAddedCourses(sid)) {
             int cap = OfferingRepository.getInstance().getCapacity(c[0], c[1]);
-            int stdCount = OfferingRepository.getInstance().getCapacity(c[0], c[1]);
+            int stdCount = OfferingRepository.getInstance().getParticipantsCount(c[0], c[1]);
             if (cap <= stdCount)
                 throw new CapacityError(c[0]);
         }
