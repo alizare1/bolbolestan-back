@@ -61,14 +61,25 @@ public class AuthFilter implements Filter {
                 throw new JwtException("Token is expired");
             System.out.println("FILTER SID FROM JWT: " + jwsClaims.getBody().get("sid"));
             request.setAttribute("sid", jwsClaims.getBody().get("sid"));
+            if (!studentHasAccess(path, jwsClaims.getBody().get("sid").toString())) {
+                ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("{\"error\": \"You don't have access to this resource\"}");
+                ((HttpServletResponse) response).setHeader("Content-Type", "application/json;charset=UTF-8");
+                return;
+            }
         } catch (JwtException e) {
             System.out.println(e.getMessage());
             ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write("{\"error\": \"BAD JWT\"}");
             ((HttpServletResponse) response).setHeader("Content-Type", "application/json;charset=UTF-8");
+            return;
         }
 
         chain.doFilter(request, response);
+    }
+
+    private boolean studentHasAccess(String[] path, String sid) {
+        return path.length < 4 || !path[2].equals("students") || path[3].equals(sid);
     }
 
     @Override
