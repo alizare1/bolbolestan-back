@@ -1,4 +1,4 @@
-package com.marshmellow.Exception;
+package com.marshmellow.bolbolestan.Exception;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

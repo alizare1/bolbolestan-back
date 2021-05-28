@@ -1,4 +1,4 @@
-package com.marshmellow.repository;
+package com.marshmellow.bolbolestan.repository;
 
 import org.apache.commons.dbcp.BasicDataSource;
 

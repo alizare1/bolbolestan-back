@@ -1,4 +1,4 @@
-package com.marshmellow.model;
+package com.marshmellow.bolbolestan.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;

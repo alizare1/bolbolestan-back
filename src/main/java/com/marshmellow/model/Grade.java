@@ -1,4 +1,4 @@
-package com.marshmellow.model;
+package com.marshmellow.bolbolestan.model;
 
 public class Grade {
     public String code;

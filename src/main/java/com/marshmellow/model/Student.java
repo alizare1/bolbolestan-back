@@ -1,9 +1,9 @@
-package com.marshmellow.model;
+package com.marshmellow.bolbolestan.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.marshmellow.Exception.*;
+import com.marshmellow.bolbolestan.Exception.*;
 
 import java.util.ArrayList;
 import java.util.Collection;

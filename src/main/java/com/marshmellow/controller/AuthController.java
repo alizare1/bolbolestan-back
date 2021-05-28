@@ -1,11 +1,11 @@
-package com.marshmellow.controller;
+package com.marshmellow.bolbolestan.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marshmellow.Exception.WrongPasswordError;
-import com.marshmellow.model.Student;
-import com.marshmellow.repository.StudentRepository;
+import com.marshmellow.bolbolestan.Exception.WrongPasswordError;
+import com.marshmellow.bolbolestan.model.Student;
+import com.marshmellow.bolbolestan.repository.StudentRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;

@@ -1,4 +1,4 @@
-package com.marshmellow.Exception;
+package com.marshmellow.bolbolestan.Exception;
 
 public class CapacityError extends Exception {
     public CapacityError(String classCode) {

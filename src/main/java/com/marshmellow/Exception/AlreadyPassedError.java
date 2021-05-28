@@ -1,4 +1,4 @@
-package com.marshmellow.Exception;
+package com.marshmellow.bolbolestan.Exception;
 
 public class AlreadyPassedError extends Exception {
     public AlreadyPassedError(String classCode) {

@@ -1,16 +1,16 @@
-package com.marshmellow.controller;
+package com.marshmellow.bolbolestan.controller;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marshmellow.Exception.StudentNotFound;
-import com.marshmellow.model.Offering;
-import com.marshmellow.model.Student;
-import com.marshmellow.repository.OfferingRepository;
-import com.marshmellow.repository.StudentRepository;
-import com.marshmellow.service.StudentService;
+import com.marshmellow.bolbolestan.Exception.StudentNotFound;
+import com.marshmellow.bolbolestan.model.Offering;
+import com.marshmellow.bolbolestan.model.Student;
+import com.marshmellow.bolbolestan.repository.OfferingRepository;
+import com.marshmellow.bolbolestan.repository.StudentRepository;
+import com.marshmellow.bolbolestan.service.StudentService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;

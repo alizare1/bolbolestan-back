@@ -1,8 +1,8 @@
-package com.marshmellow.repository;
+package com.marshmellow.bolbolestan.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marshmellow.model.Offering;
-import com.marshmellow.model.Student;
+import com.marshmellow.bolbolestan.model.Offering;
+import com.marshmellow.bolbolestan.model.Student;
 import org.apache.commons.dbutils.DbUtils;
 
 import java.io.IOException;

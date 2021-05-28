@@ -1,13 +1,13 @@
-package com.marshmellow.controller;
+package com.marshmellow.bolbolestan.controller;
 
-import com.marshmellow.Exception.OfferingNotFound;
-import com.marshmellow.Exception.StudentNotFound;
-import com.marshmellow.Exception.ClassTimeCollisionError;
-import com.marshmellow.Exception.ExamTimeCollisionError;
-import com.marshmellow.model.Offering;
-import com.marshmellow.model.Student;
+import com.marshmellow.bolbolestan.Exception.OfferingNotFound;
+import com.marshmellow.bolbolestan.Exception.StudentNotFound;
+import com.marshmellow.bolbolestan.Exception.ClassTimeCollisionError;
+import com.marshmellow.bolbolestan.Exception.ExamTimeCollisionError;
+import com.marshmellow.bolbolestan.model.Offering;
+import com.marshmellow.bolbolestan.model.Student;
 
-import com.marshmellow.repository.OfferingRepository;
+import com.marshmellow.bolbolestan.repository.OfferingRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

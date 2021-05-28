@@ -1,4 +1,4 @@
-package com.marshmellow.model;
+package com.marshmellow.bolbolestan.model;
 
 import java.text.DateFormat;
 import java.text.ParseException;

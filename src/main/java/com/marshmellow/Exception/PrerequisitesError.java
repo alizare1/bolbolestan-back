@@ -1,4 +1,4 @@
-package com.marshmellow.Exception;
+package com.marshmellow.bolbolestan.Exception;
 
 public class PrerequisitesError extends Exception {
     public PrerequisitesError(String preCode, String currCode) {

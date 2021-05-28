@@ -1,9 +1,9 @@
-package com.marshmellow.service;
+package com.marshmellow.bolbolestan.service;
 
-import com.marshmellow.Exception.*;
-import com.marshmellow.model.Offering;
-import com.marshmellow.repository.OfferingRepository;
-import com.marshmellow.repository.StudentRepository;
+import com.marshmellow.bolbolestan.Exception.*;
+import com.marshmellow.bolbolestan.model.Offering;
+import com.marshmellow.bolbolestan.repository.OfferingRepository;
+import com.marshmellow.bolbolestan.repository.StudentRepository;
 
 import java.util.ArrayList;
 

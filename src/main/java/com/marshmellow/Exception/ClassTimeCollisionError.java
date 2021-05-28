@@ -1,4 +1,4 @@
-package com.marshmellow.Exception;
+package com.marshmellow.bolbolestan.Exception;
 
 public class ClassTimeCollisionError extends Exception {
     public ClassTimeCollisionError(String code1, String code2) {
