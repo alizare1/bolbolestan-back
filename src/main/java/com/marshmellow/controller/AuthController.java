@@ -74,7 +74,7 @@ public class AuthController {
             throw new Exception("Missing Parameter");
         if (StudentRepository.getInstance().findByEmail(body.get("email").asText()) == null)
             throw new Exception("No user found with this email");
-        String resetUrl = "127.0.0.1:3000/setNewPassword/" + createPasswordResetToken(body.get("email").asText());
+        String resetUrl = "http://87.247.185.122:31009/setNewPassword/" + createPasswordResetToken(body.get("email").asText());
         sendResetPasswordMail(body.get("email").asText(), resetUrl);
         return createSuccessResponse("email sent");
     }

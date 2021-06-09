@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 public class ConnectionPool {
     private static final BasicDataSource ds = new BasicDataSource();
-    private final static String dbURL = "jdbc:mysql://localhost:3306/BolbolestanDB";
+    private final static String dbURL = "jdbc:mysql://bolbol-mysql:3306/BolbolestanDB";
     private final static String dbUserName = "bolbol";
     private final static String dbPassword = "veganShibaInu";
 
