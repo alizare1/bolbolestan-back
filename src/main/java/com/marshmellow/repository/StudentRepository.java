@@ -63,6 +63,7 @@ public class StudentRepository {
     }
 
     private StudentRepository() throws Exception {
+        OfferingRepository.getInstance(); // to make sure course tables are created
         Connection con = ConnectionPool.getConnection();
         Statement createTableStatement = con.createStatement();
         createTableStatement.addBatch(
