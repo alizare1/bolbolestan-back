@@ -1,4 +1,8 @@
-docker-build:
+stages:
+  - build
+  - deploy
+
+build:
   image: docker:latest
   stage: build
   services:
@@ -7,11 +11,21 @@ docker-build:
     - docker login -u "$QUAY_USER" -p "$QUAY_PASSWORD" quay.io
   
   script:
-    - docker build --pull -t quay.io/alizare1/bolbolestan:back .
-    - docker push quay.io/alizare1/bolbolestan:back
+    - docker build --pull -t quay.io/alizare1/bolbolestan:$CI_BUILD_REF .
+    - docker push quay.io/alizare1/bolbolestan:$CI_BUILD_REF
 
   # Run this job in a branch where a Dockerfile exists
   rules:
     - if: $CI_COMMIT_BRANCH
       exists:
         - Dockerfile
+
+deploy:
+  image: quay.io/alizare1/bolbolestan:kubectl-ovpn
+  before_script:
+    - openvpn --config $OVPN_CONFIG --daemon
+  stage: deploy
+  when: manual
+  script:
+    - kubectl --kubeconfig $KUBE_CONFIG set image deployment/server server=quay.io/alizare1/bolbolestan:$CI_BUILD_REF
+
