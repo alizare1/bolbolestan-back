@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bolbol-mysql
+  labels:
+    app: bolbol-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bolbol-mysql
+  template:
+    metadata:
+      labels:
+        app: bolbol-mysql
+    spec:
+      volumes:
+        - name: database-pv-storage
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim
+      containers:
+      - name: bolbol-mysql
+        image: m.docker-registry.ir/mysql:latest 
+        ports:
+          - containerPort: 3306
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: 0.3
+        volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: database-pv-storage
+        env:
+          - name: MYSQL_ROOT_PASSWORD   
+            value: "password"
+          - name: MYSQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: mysql-db
+                key: database
